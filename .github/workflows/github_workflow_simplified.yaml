@@ -6,7 +6,7 @@ env: # Change these settings if you like
   PUBLISH_DIRECTORY: "./out/publish"
 on:
   #  Uncomment the following lines to enable automatic deployment on push to main, deployment, or master branches
-  push:
+  # push:
     # branches:
       # - main
       # - deployment
