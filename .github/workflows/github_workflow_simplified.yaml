@@ -7,10 +7,10 @@ env: # Change these settings if you like
 on:
   #  Uncomment the following lines to enable automatic deployment on push to main, deployment, or master branches
   push:
-    branches:
-      - main
-      - deployment
-      - master 
+    # branches:
+      # - main
+      # - deployment
+      # - master 
 
   # Allows you to run this workflow manually from the Actions tab.
   workflow_dispatch:
