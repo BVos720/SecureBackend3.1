@@ -1,4 +1,4 @@
-﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using Microsoft.VisualStudio.TestTools.UnitTesting;
 using MySecureBackend.WebApi.Models;
 using System;
 using System.Collections.Generic;
@@ -17,41 +17,38 @@ namespace MySecureBackend.Tests
         public class Enviroment2DTests
         {
             [TestMethod]
-            public void IsDeWereldGroterDan750_TrueOrFalse()
+            public void IsLevelProgressGeldig_MetVerplichtVelden()
             {
-                var testEnvironmentWereldGroote = new Level2D
+                var levelProgress = new LevelProgress
                 {
-                    Name = "TestWereld",
-                    MaxLenght = 800,
-                    MaxHeight = 100
-
+                    LevelProgressId = Guid.NewGuid(),
+                    LevelProgressValue = 75.5f,
+                    Points = 100
                 };
 
-                var dossier = new ValidationContext(testEnvironmentWereldGroote);
+                var dossier = new ValidationContext(levelProgress);
                 var results = new List<ValidationResult>();
 
-                bool isValid = Validator.TryValidateObject(testEnvironmentWereldGroote, dossier, results, true);
+                bool isValid = Validator.TryValidateObject(levelProgress, dossier, results, true);
 
-                Assert.IsFalse(isValid);
-
+                Assert.IsTrue(isValid);
             }
 
-
-
             [TestMethod]
-            public void IsWereldNaamGroterDan25_TrueOrFalse()
+            public void IsPatientVoornaamLeeg_Ongeldig()
             {
-                var testEnvironmentNaam = new Level2D
+                var patient = new Patient
                 {
-                    Name = "TestWereldMetEenLangeNaamDieGroterIsDan25Tekens",
-                    MaxLenght = 600,
-                    MaxHeight = 100
+                    PatientID = Guid.NewGuid(),
+                    voornaam = "",
+                    achternaam = "Testachternaam",
+                    Leeftijd = 30
                 };
 
-                var dossier = new ValidationContext(testEnvironmentNaam);
+                var dossier = new ValidationContext(patient);
                 var results = new List<ValidationResult>();
 
-                bool isValid = Validator.TryValidateObject(testEnvironmentNaam, dossier, results, true);
+                bool isValid = Validator.TryValidateObject(patient, dossier, results, true);
 
                 Assert.IsFalse(isValid);
             }
@@ -61,25 +58,22 @@ namespace MySecureBackend.Tests
         public class Object2DTests
         {
             [TestMethod]
-            public void IsObject2DScaleKleinerDan1_TrueOrFalse()
+            public void IsPatientAchternaamLeeg_Ongeldig()
             {
-                               var testObject2DScale = new Patient
+                var patient = new Patient
                 {
-                    GUID = Guid.NewGuid(),
-                    PrefabID = 1,
-                    PositionX = 0,
-                    PositionY = 0,
-                    ScaleX = 0,
-                    ScaleY = 0,
-                    RotationZ = 0,
-                    SortingLayer = 1,
-                    EnviromentGUID = Guid.NewGuid()
+                    PatientID = Guid.NewGuid(),
+                    voornaam = "Testvoornaam",
+                    achternaam = "",
+                    Leeftijd = 25
                 };
-                var dossier = new ValidationContext(testObject2DScale);
-                var results = new List<ValidationResult>();
-                bool isValid = Validator.TryValidateObject(testObject2DScale, dossier, results, true);
-                Assert.IsFalse(isValid);
 
+                var dossier = new ValidationContext(patient);
+                var results = new List<ValidationResult>();
+
+                bool isValid = Validator.TryValidateObject(patient, dossier, results, true);
+
+                Assert.IsFalse(isValid);
             }
         }
     }

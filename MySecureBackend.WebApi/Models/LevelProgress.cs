@@ -4,16 +4,14 @@ using System.Runtime.CompilerServices;
 
 namespace MySecureBackend.WebApi.Models
 {
-    public class Level2D
+    public class LevelProgress
     {
         [Required]
-        public Guid Id { get; set; }
-        [Required, MaxLength(25)]
-        public string Name { get; set; }
-        [Range(50,750)]
-        public int MaxLenght { get; set; }
-        [Range(50,750)]
-        public int MaxHeight { get; set; }
+        public Guid LevelProgressId { get; set; }
+        [Required]
+        public float LevelProgressValue { get; set; }
+        [Required]
+        public int Points { get; set; }
         [ValidateNever]
         public string UserID { get; set; } 
     }

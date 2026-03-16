@@ -11,73 +11,78 @@ namespace MySecureBackend.WebApi.Controllers;
 [Produces("application/json")]
 public class PatientController : ControllerBase
 {
-    private readonly IObject2D _iobject2d;
+    private readonly IPatient _ipatient;
     private readonly IAuthenticationService _authenticationService;
 
-    public PatientController(IObject2D objectrepository, IAuthenticationService authenticationService)
+    public PatientController(IPatient patientRepository, IAuthenticationService authenticationService)
     {
-        _iobject2d = objectrepository;
+        _ipatient = patientRepository;
         _authenticationService = authenticationService;
     }
 
-    [HttpGet(Name = "GetObject2D")]
+    [HttpGet(Name = "GetPatients")]
     public async Task<ActionResult<List<Patient>>> GetAsync()
     {
-        var object2d = await _iobject2d.SelectAsync();
-        return Ok(object2d);
-    }
-    [HttpGet("{object2DID}", Name = "GetAllObject2D")]
-    public async Task<ActionResult<Patient>> GetByIdAsync(Guid object2DID)
-    {
-        var object2D = await _iobject2d.SelectAsync(object2DID);
+        var userIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
 
-        if (object2D == null)
-            return NotFound(new ProblemDetails { Detail = $"ExampleObject {object2DID} not found" });
+        if (string.IsNullOrEmpty(userIdClaim))
+            return Unauthorized("Geen geldige gebruikerssessie gevonden.");
 
-        return Ok(object2D);
+        var patients = await _ipatient.SelectByUserAsync(userIdClaim);
+        return Ok(patients);
     }
 
-    [HttpGet("environment/{environmentId}", Name = "GetObject2DsByEnvironment")]
-    public async Task<ActionResult<IEnumerable<Patient>>> GetByEnvironmentAsync(Guid environmentId)
+    [HttpGet("{patientID}", Name = "GetPatientById")]
+    public async Task<ActionResult<Patient>> GetByIdAsync(Guid patientID)
     {
-        var objects = await _iobject2d.SelectByEnvironmentAsync(environmentId);
-        return Ok(objects);
+        var patient = await _ipatient.SelectAsync(patientID);
+
+        if (patient == null)
+            return NotFound(new ProblemDetails { Detail = $"Patient {patientID} not found" });
+
+        return Ok(patient);
     }
 
-    [HttpPost(Name = "AddObject2DID")]
-    public async Task<ActionResult<Patient>> AddAsync(Patient object2d)
+    [HttpPost(Name = "AddPatient")]
+    public async Task<ActionResult<Patient>> AddAsync(Patient patient)
     {
-        object2d.GUID = Guid.NewGuid();
+        var userIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
 
-        await _iobject2d.InsertAsync(object2d);
+        if (string.IsNullOrEmpty(userIdClaim))
+            return Unauthorized("Geen geldige gebruikerssessie gevonden.");
 
-        return CreatedAtRoute("GetObject2D", new { Object2DID = object2d.GUID }, object2d);
+        patient.PatientID = Guid.NewGuid();
+        patient.UserID = userIdClaim;
+
+        await _ipatient.InsertAsync(patient);
+
+        return CreatedAtRoute("GetPatientById", new { patientID = patient.PatientID }, patient);
     }
 
-    [HttpPut("{Object2DID}", Name = "UpdateObject2D")]
-    public async Task<ActionResult<Patient>> UpdateAsync(Guid object2DID, Patient object2D)
+    [HttpPut("{patientID}", Name = "UpdatePatient")]
+    public async Task<ActionResult<Patient>> UpdateAsync(Guid patientID, Patient patient)
     {
-        var existingObject2D = await _iobject2d.SelectAsync(object2DID);
-        if (existingObject2D == null)
-            return NotFound(new ProblemDetails { Detail = $"ExampleObject {object2DID} not found" });
+        var existingPatient = await _ipatient.SelectAsync(patientID);
+        if (existingPatient == null)
+            return NotFound(new ProblemDetails { Detail = $"Patient {patientID} not found" });
 
-        if (object2D.GUID != object2DID)
-            return Conflict(new ProblemDetails { Detail = "The id of the ExampleObject in the route does not match the id of the ExampleObject in the body" });
+        if (patient.PatientID != patientID)
+            return Conflict(new ProblemDetails { Detail = "The id of the Patient in the route does not match the id of the Patient in the body" });
 
-        await _iobject2d.UpdateAsync(object2D);
+        await _ipatient.UpdateAsync(patient);
 
-        return Ok(object2D);
+        return Ok(patient);
     }
 
-    [HttpDelete("{object2DID}", Name = "DeleteObject2D")]
-    public async Task<ActionResult> DeleteAsync(Guid object2DID)
+    [HttpDelete("{patientID}", Name = "DeletePatient")]
+    public async Task<ActionResult> DeleteAsync(Guid patientID)
     {
-        var object2D = await _iobject2d.SelectAsync(object2DID);
+        var patient = await _ipatient.SelectAsync(patientID);
 
-        if (object2D == null)
-            return NotFound(new ProblemDetails { Detail = $"ExampleObject {object2DID} not found" });
+        if (patient == null)
+            return NotFound(new ProblemDetails { Detail = $"Patient {patientID} not found" });
 
-        await _iobject2d.deleteAsync(object2DID);
+        await _ipatient.deleteAsync(patientID);
 
         return Ok();
     }

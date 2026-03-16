@@ -1,10 +1,10 @@
-﻿using Dapper;
+using Dapper;
 using Microsoft.Data.SqlClient;
 using MySecureBackend.WebApi.Models;
 
 namespace MySecureBackend.WebApi.Repositories
 {
-    public class SQLobject2D : IObject2D
+    public class SQLobject2D : IPatient
     {
         private readonly string sqlConnectionString;
 
@@ -13,11 +13,14 @@ namespace MySecureBackend.WebApi.Repositories
             this.sqlConnectionString = sqlConnectionString;
         }
 
-        public async Task InsertAsync(Patient object2d)
+        public async Task InsertAsync(Patient patient)
         {
             using (var sqlConnection = new SqlConnection(sqlConnectionString))
             {
-               await sqlConnection.ExecuteAsync("INSERT INTO [Object2D] (GUID, PrefabID, PositionX, PositionY, ScaleX, ScaleY, RotationZ, SortingLayer, EnvironmentGUID) VALUES (@GUID, @PrefabID, @PositionX, @PositionY, @ScaleX, @ScaleY, @RotationZ, @SortingLayer, @EnviromentGUID)", object2d);
+                await sqlConnection.ExecuteAsync(
+                    "INSERT INTO [Patient] (PatientID, voornaam, achternaam, Leeftijd, UserID) " +
+                    "VALUES (@PatientID, @voornaam, @achternaam, @Leeftijd, @UserID)",
+                    patient);
             }
         }
 
@@ -25,7 +28,9 @@ namespace MySecureBackend.WebApi.Repositories
         {
             using (var sqlConnection = new SqlConnection(sqlConnectionString))
             {
-                return await sqlConnection.QuerySingleOrDefaultAsync<Patient>("SELECT * FROM [Object2D] WHERE GUID = @GUID", new { GUID });   
+                return await sqlConnection.QuerySingleOrDefaultAsync<Patient>(
+                    "SELECT PatientID, voornaam, achternaam, Leeftijd FROM [Patient] WHERE PatientID = @GUID",
+                    new { GUID });
             }
         }
 
@@ -33,28 +38,32 @@ namespace MySecureBackend.WebApi.Repositories
         {
             using (var sqlConnection = new SqlConnection(sqlConnectionString))
             {
-                return await sqlConnection.QueryAsync<Patient>("SELECT * FROM [Object2D]");
+                return await sqlConnection.QueryAsync<Patient>(
+                    "SELECT PatientID, voornaam, achternaam, Leeftijd FROM [Patient]");
             }
         }
 
-        public async Task UpdateAsync(Patient object2d)
-        {
-            using (var sqlConnection = new SqlConnection(sqlConnectionString))
-            {
-                await sqlConnection.ExecuteAsync(
-                    "UPDATE [Object2D] SET PrefabID = @PrefabID, PositionX = @PositionX, PositionY = @PositionY, " +
-                    "ScaleX = @ScaleX, ScaleY = @ScaleY, RotationZ = @RotationZ, SortingLayer = @SortingLayer " +
-                    "WHERE GUID = @GUID", object2d);
-            }
-        }
-
-        public async Task<IEnumerable<Patient>> SelectByEnvironmentAsync(Guid environmentId)
+        public async Task<IEnumerable<Patient>> SelectByUserAsync(string userId)
         {
             using (var sqlConnection = new SqlConnection(sqlConnectionString))
             {
                 return await sqlConnection.QueryAsync<Patient>(
-                    "SELECT * FROM [Object2D] WHERE EnvironmentGUID = @environmentId",
-                    new { environmentId });
+                    "SELECT PatientID, voornaam, achternaam, Leeftijd FROM [Patient] WHERE UserID = @userId",
+                    new { userId });
+            }
+        }
+
+        public async Task UpdateAsync(Patient patient)
+        {
+            using (var sqlConnection = new SqlConnection(sqlConnectionString))
+            {
+                await sqlConnection.ExecuteAsync(
+                    "UPDATE [Patient] SET " +
+                    "voornaam = @voornaam, " +
+                    "achternaam = @achternaam, " +
+                    "Leeftijd = @Leeftijd " +
+                    "WHERE PatientID = @PatientID",
+                    patient);
             }
         }
 
@@ -62,15 +71,9 @@ namespace MySecureBackend.WebApi.Repositories
         {
             using (var sqlConnection = new SqlConnection(sqlConnectionString))
             {
-                await sqlConnection.ExecuteAsync("DELETE FROM [Object2D] WHERE GUID = @GUID", new { GUID });
-            }
-        }
-
-        public async Task DeleteByEnvironmentAsync(Guid environmentId)
-        {
-            using (var sqlConnection = new SqlConnection(sqlConnectionString))
-            {
-                await sqlConnection.ExecuteAsync("DELETE FROM [Object2D] WHERE EnvironmentGUID = @environmentId", new { environmentId });
+                await sqlConnection.ExecuteAsync(
+                    "DELETE FROM [Patient] WHERE PatientID = @GUID",
+                    new { GUID });
             }
         }
     }

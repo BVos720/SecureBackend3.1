@@ -1,41 +1,42 @@
-﻿using MySecureBackend.WebApi.Models;
+using MySecureBackend.WebApi.Models;
 
 namespace MySecureBackend.WebApi.Repositories
 {
-    public class MemoryEnviromentRepository : IEnviroment2D
+    public class MemoryEnviromentRepository : ILevelProgress
     {
-        private static List<Level2D> Enviroments = [];
+        private static List<LevelProgress> LevelProgresses = [];
+
         public Task deleteAsync(Guid id)
         {
-            Enviroments.Remove(Enviroments.Single(x => x.Id == id));
+            LevelProgresses.Remove(LevelProgresses.Single(x => x.LevelProgressId == id));
             return Task.CompletedTask;
         }
 
-        public Task InsertAsync(Level2D enviroment2D)
+        public Task InsertAsync(LevelProgress levelProgress)
         {
-            Enviroments.Add(enviroment2D);
+            LevelProgresses.Add(levelProgress);
             return Task.CompletedTask;
         }
 
-        public Task<IEnumerable<Level2D>> SelectAsync()
+        public Task<IEnumerable<LevelProgress>> SelectAsync()
         {
-            return Task.FromResult(Enviroments.AsEnumerable());
+            return Task.FromResult(LevelProgresses.AsEnumerable());
         }
 
-        public Task<Level2D?> SelectAsync(Guid id)
+        public Task<LevelProgress?> SelectAsync(Guid id)
         {
-            return Task.FromResult(Enviroments.SingleOrDefault(x => x.Id == id));
+            return Task.FromResult(LevelProgresses.SingleOrDefault(x => x.LevelProgressId == id));
         }
 
-        public Task<IEnumerable<Level2D>> SelectByUserAsync(string userId)
+        public Task<IEnumerable<LevelProgress>> SelectByUserAsync(string userId)
         {
-            throw new NotImplementedException();
+            return Task.FromResult(LevelProgresses.Where(x => x.UserID == userId).AsEnumerable());
         }
 
-        public async Task UpdateAsync(Level2D enviroment2D)
+        public async Task UpdateAsync(LevelProgress levelProgress)
         {
-            await deleteAsync(enviroment2D.Id);
-            await InsertAsync(enviroment2D);
+            await deleteAsync(levelProgress.LevelProgressId);
+            await InsertAsync(levelProgress);
         }
     }
 }

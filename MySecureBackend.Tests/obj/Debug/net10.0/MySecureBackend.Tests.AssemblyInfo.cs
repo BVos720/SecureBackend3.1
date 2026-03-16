@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("MySecureBackend.Tests")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+74f5ad008aa7d328bd94e40083d4e43802527988")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+742a20af03c26e5cb40c84338b683f0aa1a6e484")]
 [assembly: System.Reflection.AssemblyProductAttribute("MySecureBackend.Tests")]
 [assembly: System.Reflection.AssemblyTitleAttribute("MySecureBackend.Tests")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

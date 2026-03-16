@@ -1,10 +1,10 @@
-﻿using Dapper;
+using Dapper;
 using Microsoft.Data.SqlClient;
 using MySecureBackend.WebApi.Models;
 
 namespace MySecureBackend.WebApi.Repositories
 {
-    public class SQLGameObjectRepository : IEnviroment2D
+    public class SQLGameObjectRepository : ILevelProgress
     {
         private readonly string sqlConnectionString;
 
@@ -13,58 +13,57 @@ namespace MySecureBackend.WebApi.Repositories
             this.sqlConnectionString = sqlConnectionString;
         }
 
-        public async Task InsertAsync(Level2D enviroment2D)
+        public async Task InsertAsync(LevelProgress levelProgress)
         {
             using (var sqlConnection = new SqlConnection(sqlConnectionString))
             {
-                
                 await sqlConnection.ExecuteAsync(
-                    "INSERT INTO [Enviroment2D] (GUID, Name, MaxHeigth, MaxLenght, UserID) " +
-                    "VALUES (@Id, @Name, @MaxHeight, @MaxLenght, @UserID)", 
-                    enviroment2D);
+                    "INSERT INTO [LevelProgress] (LevelProgressId, LevelProgressValue, Points, UserID) " +
+                    "VALUES (@LevelProgressId, @LevelProgressValue, @Points, @UserID)",
+                    levelProgress);
             }
         }
 
-        public async Task<Level2D?> SelectAsync(Guid GUID)
+        public async Task<LevelProgress?> SelectAsync(Guid GUID)
         {
             using (var sqlConnection = new SqlConnection(sqlConnectionString))
             {
-                string sql = "SELECT GUID AS Id, Name, MaxHeigth AS MaxHeight, MaxLenght, UserID FROM [Enviroment2D] WHERE GUID = @GUID";
+                string sql = "SELECT LevelProgressId, LevelProgressValue, Points, UserID FROM [LevelProgress] WHERE LevelProgressId = @GUID";
 
-                return await sqlConnection.QuerySingleOrDefaultAsync<Level2D>(sql, new { GUID = GUID.ToString() });
+                return await sqlConnection.QuerySingleOrDefaultAsync<LevelProgress>(sql, new { GUID = GUID.ToString() });
             }
         }
 
-        public async Task<IEnumerable<Level2D>> SelectAsync()
+        public async Task<IEnumerable<LevelProgress>> SelectAsync()
         {
             using (var sqlConnection = new SqlConnection(sqlConnectionString))
             {
-                string sql = "SELECT GUID AS Id, Name, MaxHeigth AS MaxHeight, MaxLenght, UserID FROM [Enviroment2D]";
+                string sql = "SELECT LevelProgressId, LevelProgressValue, Points, UserID FROM [LevelProgress]";
 
-                return await sqlConnection.QueryAsync<Level2D>(sql);
+                return await sqlConnection.QueryAsync<LevelProgress>(sql);
             }
         }
 
-        public async Task<IEnumerable<Level2D>> SelectByUserAsync(string userId)
+        public async Task<IEnumerable<LevelProgress>> SelectByUserAsync(string userId)
         {
             using (var sqlConnection = new SqlConnection(sqlConnectionString))
             {
-                string sql = "SELECT GUID AS Id, Name, MaxHeigth AS MaxHeight, MaxLenght, UserID FROM [Enviroment2D] WHERE UserID = @userId";
+                string sql = "SELECT LevelProgressId, LevelProgressValue, Points, UserID FROM [LevelProgress] WHERE UserID = @userId";
 
-                return await sqlConnection.QueryAsync<Level2D>(sql, new { userId });
+                return await sqlConnection.QueryAsync<LevelProgress>(sql, new { userId });
             }
         }
 
-        public async Task UpdateAsync(Level2D enviroment2D)
+        public async Task UpdateAsync(LevelProgress levelProgress)
         {
             using (var sqlConnection = new SqlConnection(sqlConnectionString))
             {
-                await sqlConnection.ExecuteAsync("UPDATE [Enviroment2D] SET " +
-                                                 "Name = @Name, " +
-                                                 "MaxHeight = @MaxHeight " +
-                                                 "MaxLenght = @MaxLenght" +
-                                                 "WHERE GUID = @GUID", enviroment2D);
-
+                await sqlConnection.ExecuteAsync(
+                    "UPDATE [LevelProgress] SET " +
+                    "LevelProgressValue = @LevelProgressValue, " +
+                    "Points = @Points " +
+                    "WHERE LevelProgressId = @LevelProgressId",
+                    levelProgress);
             }
         }
 
@@ -72,7 +71,7 @@ namespace MySecureBackend.WebApi.Repositories
         {
             using (var sqlConnection = new SqlConnection(sqlConnectionString))
             {
-                await sqlConnection.ExecuteAsync("DELETE FROM [Enviroment2D] WHERE GUID = @GUID", new { GUID });
+                await sqlConnection.ExecuteAsync("DELETE FROM [LevelProgress] WHERE LevelProgressId = @GUID", new { GUID });
             }
         }
     }

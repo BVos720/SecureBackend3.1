@@ -11,33 +11,33 @@ namespace MySecureBackend.WebApi.Controllers;
 [Produces("application/json")]
 public class Enviroment2DControler : ControllerBase
 {
-    private readonly IEnviroment2D _ienviroment2d;
-    private readonly IObject2D _iobject2d;
+    private readonly IPatient _ipatient;
+    private readonly IPatient _ipatients;
     private readonly IAuthenticationService _authenticationService;
 
-    public Enviroment2DControler(IEnviroment2D enviromentRepository, IObject2D objectRepository, IAuthenticationService authenticationService)
+    public Enviroment2DControler(IPatient enviromentRepository, IPatient objectRepository, IAuthenticationService authenticationService)
     {
-        _ienviroment2d = enviromentRepository;
-        _iobject2d = objectRepository;
+        _ipatient = enviromentRepository;
+        _ipatients = objectRepository;
         _authenticationService = authenticationService;
     }
 
     [HttpGet(Name = "Get2DEnviroment")]
-    public async Task<ActionResult<List<Level2D>>> GetAsync()
+    public async Task<ActionResult<List<LevelProgress>>> GetAsync()
     {
         var userIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
 
         if (string.IsNullOrEmpty(userIdClaim))
             return Unauthorized("Geen geldige gebruikerssessie gevonden.");
 
-        var enviroments2D = await _ienviroment2d.SelectByUserAsync(userIdClaim);
+        var enviroments2D = await _ipatient.SelectByUserAsync(userIdClaim);
         return Ok(enviroments2D);
     }
 
     [HttpGet("{enviroment2dID}", Name = "GetEnviroment2D")]
-    public async Task<ActionResult<Level2D>> GetByIdAsync(Guid enviroment2dID)
+    public async Task<ActionResult<LevelProgress>> GetByIdAsync(Guid enviroment2dID)
     {
-        var enviroment2D = await _ienviroment2d.SelectAsync(enviroment2dID);
+        var enviroment2D = await _ipatient.SelectAsync(enviroment2dID);
 
         if (enviroment2D == null)
             return NotFound(new ProblemDetails { Detail = $"Environment2D {enviroment2dID} not found." });
@@ -46,14 +46,14 @@ public class Enviroment2DControler : ControllerBase
     }
 
     [HttpPost(Name = "AddEnviroment2D")]
-    public async Task<ActionResult<Level2D>> AddAsync(Level2D enviroment2d)
+    public async Task<ActionResult<LevelProgress>> AddAsync(LevelProgress enviroment2d)
     {
         var userIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
 
         if (string.IsNullOrEmpty(userIdClaim))
             return Unauthorized("Geen geldige gebruikerssessie gevonden.");
 
-        var bestaandeWerelden = await _ienviroment2d.SelectByUserAsync(userIdClaim);
+        var bestaandeWerelden = await _ipatient.SelectByUserAsync(userIdClaim);
         if (bestaandeWerelden.Count() >= 5)
             return BadRequest(new ProblemDetails { Detail = "Je mag niet meer dan 5 werelden aanmaken." });
 
@@ -63,15 +63,15 @@ public class Enviroment2DControler : ControllerBase
         enviroment2d.Id = Guid.NewGuid();
         enviroment2d.UserID = userIdClaim;
 
-        await _ienviroment2d.InsertAsync(enviroment2d);
+        await _ipatient.InsertAsync(enviroment2d);
 
         return CreatedAtRoute("GetEnviroment2D", new { enviroment2dID = enviroment2d.Id }, enviroment2d);
     }
 
     [HttpPut("{enviroment2dID}", Name = "UpdateEnviroment2D")]
-    public async Task<ActionResult<Level2D>> UpdateAsync(Guid enviroment2dID, Level2D enviroment2D)
+    public async Task<ActionResult<LevelProgress>> UpdateAsync(Guid enviroment2dID, LevelProgress enviroment2D)
     {
-        var existingEnviroment = await _ienviroment2d.SelectAsync(enviroment2dID);
+        var existingEnviroment = await _ipatient.SelectAsync(enviroment2dID);
 
         if (existingEnviroment == null)
             return NotFound(new ProblemDetails { Detail = $"Environment2D {enviroment2dID} not found." });
@@ -79,7 +79,7 @@ public class Enviroment2DControler : ControllerBase
         if (enviroment2D.Id != enviroment2dID)
             return Conflict(new ProblemDetails { Detail = "The ID of the Environment2D in the route does not match the ID in the body." });
 
-        await _ienviroment2d.UpdateAsync(enviroment2D);
+        await _ipatient.UpdateAsync(enviroment2D);
 
         return Ok(enviroment2D);
     }
@@ -87,7 +87,7 @@ public class Enviroment2DControler : ControllerBase
     [HttpDelete("{enviroment2dID}", Name = "DeleteEnviroment2D")]
     public async Task<ActionResult> DeleteAsync(Guid enviroment2dID)
     {
-        var existingEnviroment = await _ienviroment2d.SelectAsync(enviroment2dID);
+        var existingEnviroment = await _ipatient.SelectAsync(enviroment2dID);
 
         if (existingEnviroment == null)
             return NotFound(new ProblemDetails { Detail = $"Environment2D {enviroment2dID} not found." });
@@ -99,8 +99,8 @@ public class Enviroment2DControler : ControllerBase
             return Forbid();
         }
 
-        await _iobject2d.DeleteByEnvironmentAsync(enviroment2dID);
-        await _ienviroment2d.deleteAsync(enviroment2dID);
+        await _ipatients.DeleteByEnvironmentAsync(enviroment2dID);
+        await _ipatient.deleteAsync(enviroment2dID);
 
         return Ok();
     }

@@ -1,28 +1,19 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.Runtime.CompilerServices;
+﻿using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
+using System.ComponentModel.DataAnnotations;
 
 namespace MySecureBackend.WebApi.Models
 {
     public class Patient
     {
         [Required]
-        public Guid GUID { get; set; }
+        public Guid PatientID { get; set; }
         [Required]
-        public int PrefabID { get; set; }
+        public string voornaam { get; set; }
         [Required]
-        public double PositionX { get; set; } 
+        public string achternaam { get; set; }
         [Required]
-        public double PositionY { get; set; }
-        [Required, Range(1, 1000)]
-        public double ScaleX { get; set; }
-        [Required, Range(1, 1000)]
-        public double ScaleY { get; set; }
-        [Required]
-        public double RotationZ { get; set; }
-        [Required, Range(1,10)]
-        public int SortingLayer { get; set; }
-        [Required]
-        public Guid EnviromentGUID { get; set; }
-
+        public int Leeftijd { get; set; }
+        [ValidateNever]
+        public string UserID { get; set; }
     }
 }
