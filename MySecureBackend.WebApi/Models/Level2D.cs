@@ -4,7 +4,7 @@ using System.Runtime.CompilerServices;
 
 namespace MySecureBackend.WebApi.Models
 {
-    public class Enviroment2D
+    public class Level2D
     {
         [Required]
         public Guid Id { get; set; }

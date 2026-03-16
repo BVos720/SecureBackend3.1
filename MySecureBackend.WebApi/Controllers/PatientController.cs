@@ -9,25 +9,25 @@ namespace MySecureBackend.WebApi.Controllers;
 [Route("[controller]")]
 [Consumes("application/json")]
 [Produces("application/json")]
-public class Object2DController : ControllerBase
+public class PatientController : ControllerBase
 {
     private readonly IObject2D _iobject2d;
     private readonly IAuthenticationService _authenticationService;
 
-    public Object2DController(IObject2D objectrepository, IAuthenticationService authenticationService)
+    public PatientController(IObject2D objectrepository, IAuthenticationService authenticationService)
     {
         _iobject2d = objectrepository;
         _authenticationService = authenticationService;
     }
 
     [HttpGet(Name = "GetObject2D")]
-    public async Task<ActionResult<List<Object2D>>> GetAsync()
+    public async Task<ActionResult<List<Patient>>> GetAsync()
     {
         var object2d = await _iobject2d.SelectAsync();
         return Ok(object2d);
     }
     [HttpGet("{object2DID}", Name = "GetAllObject2D")]
-    public async Task<ActionResult<Object2D>> GetByIdAsync(Guid object2DID)
+    public async Task<ActionResult<Patient>> GetByIdAsync(Guid object2DID)
     {
         var object2D = await _iobject2d.SelectAsync(object2DID);
 
@@ -38,14 +38,14 @@ public class Object2DController : ControllerBase
     }
 
     [HttpGet("environment/{environmentId}", Name = "GetObject2DsByEnvironment")]
-    public async Task<ActionResult<IEnumerable<Object2D>>> GetByEnvironmentAsync(Guid environmentId)
+    public async Task<ActionResult<IEnumerable<Patient>>> GetByEnvironmentAsync(Guid environmentId)
     {
         var objects = await _iobject2d.SelectByEnvironmentAsync(environmentId);
         return Ok(objects);
     }
 
     [HttpPost(Name = "AddObject2DID")]
-    public async Task<ActionResult<Object2D>> AddAsync(Object2D object2d)
+    public async Task<ActionResult<Patient>> AddAsync(Patient object2d)
     {
         object2d.GUID = Guid.NewGuid();
 
@@ -55,7 +55,7 @@ public class Object2DController : ControllerBase
     }
 
     [HttpPut("{Object2DID}", Name = "UpdateObject2D")]
-    public async Task<ActionResult<Object2D>> UpdateAsync(Guid object2DID, Object2D object2D)
+    public async Task<ActionResult<Patient>> UpdateAsync(Guid object2DID, Patient object2D)
     {
         var existingObject2D = await _iobject2d.SelectAsync(object2DID);
         if (existingObject2D == null)

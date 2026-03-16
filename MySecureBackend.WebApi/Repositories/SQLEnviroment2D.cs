@@ -13,7 +13,7 @@ namespace MySecureBackend.WebApi.Repositories
             this.sqlConnectionString = sqlConnectionString;
         }
 
-        public async Task InsertAsync(Enviroment2D enviroment2D)
+        public async Task InsertAsync(Level2D enviroment2D)
         {
             using (var sqlConnection = new SqlConnection(sqlConnectionString))
             {
@@ -25,37 +25,37 @@ namespace MySecureBackend.WebApi.Repositories
             }
         }
 
-        public async Task<Enviroment2D?> SelectAsync(Guid GUID)
+        public async Task<Level2D?> SelectAsync(Guid GUID)
         {
             using (var sqlConnection = new SqlConnection(sqlConnectionString))
             {
                 string sql = "SELECT GUID AS Id, Name, MaxHeigth AS MaxHeight, MaxLenght, UserID FROM [Enviroment2D] WHERE GUID = @GUID";
 
-                return await sqlConnection.QuerySingleOrDefaultAsync<Enviroment2D>(sql, new { GUID = GUID.ToString() });
+                return await sqlConnection.QuerySingleOrDefaultAsync<Level2D>(sql, new { GUID = GUID.ToString() });
             }
         }
 
-        public async Task<IEnumerable<Enviroment2D>> SelectAsync()
+        public async Task<IEnumerable<Level2D>> SelectAsync()
         {
             using (var sqlConnection = new SqlConnection(sqlConnectionString))
             {
                 string sql = "SELECT GUID AS Id, Name, MaxHeigth AS MaxHeight, MaxLenght, UserID FROM [Enviroment2D]";
 
-                return await sqlConnection.QueryAsync<Enviroment2D>(sql);
+                return await sqlConnection.QueryAsync<Level2D>(sql);
             }
         }
 
-        public async Task<IEnumerable<Enviroment2D>> SelectByUserAsync(string userId)
+        public async Task<IEnumerable<Level2D>> SelectByUserAsync(string userId)
         {
             using (var sqlConnection = new SqlConnection(sqlConnectionString))
             {
                 string sql = "SELECT GUID AS Id, Name, MaxHeigth AS MaxHeight, MaxLenght, UserID FROM [Enviroment2D] WHERE UserID = @userId";
 
-                return await sqlConnection.QueryAsync<Enviroment2D>(sql, new { userId });
+                return await sqlConnection.QueryAsync<Level2D>(sql, new { userId });
             }
         }
 
-        public async Task UpdateAsync(Enviroment2D enviroment2D)
+        public async Task UpdateAsync(Level2D enviroment2D)
         {
             using (var sqlConnection = new SqlConnection(sqlConnectionString))
             {

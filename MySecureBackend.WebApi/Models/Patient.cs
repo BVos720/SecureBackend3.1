@@ -3,7 +3,7 @@ using System.Runtime.CompilerServices;
 
 namespace MySecureBackend.WebApi.Models
 {
-    public class Object2D
+    public class Patient
     {
         [Required]
         public Guid GUID { get; set; }

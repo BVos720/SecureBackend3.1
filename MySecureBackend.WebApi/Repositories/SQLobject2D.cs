@@ -13,7 +13,7 @@ namespace MySecureBackend.WebApi.Repositories
             this.sqlConnectionString = sqlConnectionString;
         }
 
-        public async Task InsertAsync(Object2D object2d)
+        public async Task InsertAsync(Patient object2d)
         {
             using (var sqlConnection = new SqlConnection(sqlConnectionString))
             {
@@ -21,23 +21,23 @@ namespace MySecureBackend.WebApi.Repositories
             }
         }
 
-        public async Task<Object2D?> SelectAsync(Guid GUID)
+        public async Task<Patient?> SelectAsync(Guid GUID)
         {
             using (var sqlConnection = new SqlConnection(sqlConnectionString))
             {
-                return await sqlConnection.QuerySingleOrDefaultAsync<Object2D>("SELECT * FROM [Object2D] WHERE GUID = @GUID", new { GUID });   
+                return await sqlConnection.QuerySingleOrDefaultAsync<Patient>("SELECT * FROM [Object2D] WHERE GUID = @GUID", new { GUID });   
             }
         }
 
-        public async Task<IEnumerable<Object2D>> SelectAsync()
+        public async Task<IEnumerable<Patient>> SelectAsync()
         {
             using (var sqlConnection = new SqlConnection(sqlConnectionString))
             {
-                return await sqlConnection.QueryAsync<Object2D>("SELECT * FROM [Object2D]");
+                return await sqlConnection.QueryAsync<Patient>("SELECT * FROM [Object2D]");
             }
         }
 
-        public async Task UpdateAsync(Object2D object2d)
+        public async Task UpdateAsync(Patient object2d)
         {
             using (var sqlConnection = new SqlConnection(sqlConnectionString))
             {
@@ -48,11 +48,11 @@ namespace MySecureBackend.WebApi.Repositories
             }
         }
 
-        public async Task<IEnumerable<Object2D>> SelectByEnvironmentAsync(Guid environmentId)
+        public async Task<IEnumerable<Patient>> SelectByEnvironmentAsync(Guid environmentId)
         {
             using (var sqlConnection = new SqlConnection(sqlConnectionString))
             {
-                return await sqlConnection.QueryAsync<Object2D>(
+                return await sqlConnection.QueryAsync<Patient>(
                     "SELECT * FROM [Object2D] WHERE EnvironmentGUID = @environmentId",
                     new { environmentId });
             }

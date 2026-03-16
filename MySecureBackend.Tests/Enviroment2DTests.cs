@@ -19,7 +19,7 @@ namespace MySecureBackend.Tests
             [TestMethod]
             public void IsDeWereldGroterDan750_TrueOrFalse()
             {
-                var testEnvironmentWereldGroote = new Enviroment2D
+                var testEnvironmentWereldGroote = new Level2D
                 {
                     Name = "TestWereld",
                     MaxLenght = 800,
@@ -41,7 +41,7 @@ namespace MySecureBackend.Tests
             [TestMethod]
             public void IsWereldNaamGroterDan25_TrueOrFalse()
             {
-                var testEnvironmentNaam = new Enviroment2D
+                var testEnvironmentNaam = new Level2D
                 {
                     Name = "TestWereldMetEenLangeNaamDieGroterIsDan25Tekens",
                     MaxLenght = 600,
@@ -63,7 +63,7 @@ namespace MySecureBackend.Tests
             [TestMethod]
             public void IsObject2DScaleKleinerDan1_TrueOrFalse()
             {
-                               var testObject2DScale = new Object2D
+                               var testObject2DScale = new Patient
                 {
                     GUID = Guid.NewGuid(),
                     PrefabID = 1,

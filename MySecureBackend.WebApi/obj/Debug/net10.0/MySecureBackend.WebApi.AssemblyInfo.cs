@@ -15,7 +15,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("MySecureBackend.WebApi")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+63134626ca4903df1ad7d02dad9aebf90a27699b")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+74f5ad008aa7d328bd94e40083d4e43802527988")]
 [assembly: System.Reflection.AssemblyProductAttribute("MySecureBackend.WebApi")]
 [assembly: System.Reflection.AssemblyTitleAttribute("MySecureBackend.WebApi")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]

@@ -23,7 +23,7 @@ public class Enviroment2DControler : ControllerBase
     }
 
     [HttpGet(Name = "Get2DEnviroment")]
-    public async Task<ActionResult<List<Enviroment2D>>> GetAsync()
+    public async Task<ActionResult<List<Level2D>>> GetAsync()
     {
         var userIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
 
@@ -35,7 +35,7 @@ public class Enviroment2DControler : ControllerBase
     }
 
     [HttpGet("{enviroment2dID}", Name = "GetEnviroment2D")]
-    public async Task<ActionResult<Enviroment2D>> GetByIdAsync(Guid enviroment2dID)
+    public async Task<ActionResult<Level2D>> GetByIdAsync(Guid enviroment2dID)
     {
         var enviroment2D = await _ienviroment2d.SelectAsync(enviroment2dID);
 
@@ -46,7 +46,7 @@ public class Enviroment2DControler : ControllerBase
     }
 
     [HttpPost(Name = "AddEnviroment2D")]
-    public async Task<ActionResult<Enviroment2D>> AddAsync(Enviroment2D enviroment2d)
+    public async Task<ActionResult<Level2D>> AddAsync(Level2D enviroment2d)
     {
         var userIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
 
@@ -69,7 +69,7 @@ public class Enviroment2DControler : ControllerBase
     }
 
     [HttpPut("{enviroment2dID}", Name = "UpdateEnviroment2D")]
-    public async Task<ActionResult<Enviroment2D>> UpdateAsync(Guid enviroment2dID, Enviroment2D enviroment2D)
+    public async Task<ActionResult<Level2D>> UpdateAsync(Guid enviroment2dID, Level2D enviroment2D)
     {
         var existingEnviroment = await _ienviroment2d.SelectAsync(enviroment2dID);
 
