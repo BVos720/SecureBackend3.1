@@ -56,6 +56,10 @@ builder.Services.AddTransient<IAuthenticationService, AspNetIdentityAuthenticati
 //builder.Services.AddTransient<IEnviroment2D, MemoryEnviromentRepository>();
 builder.Services.AddTransient<ILevelProgress, SQLGameObjectRepository>(o => new SQLGameObjectRepository(sqlConnectionString!));
 builder.Services.AddTransient<IPatient, SQLobject2D>(o => new SQLobject2D(sqlConnectionString!));
+builder.Services.AddTransient<IGameProgress, SQLGameProgressRepository>(o => new SQLGameProgressRepository(sqlConnectionString!));
+builder.Services.AddTransient<IBehandeling, SQLBehandelingRepository>(o => new SQLBehandelingRepository(sqlConnectionString!));
+builder.Services.AddTransient<IKind, SQLKindRepository>(o => new SQLKindRepository(sqlConnectionString!));
+builder.Services.AddTransient<IOuder, SQLOuderRepository>(o => new SQLOuderRepository(sqlConnectionString!));
 
 var app = builder.Build();
 
