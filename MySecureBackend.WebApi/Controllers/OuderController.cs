@@ -39,7 +39,13 @@ public class OuderController : ControllerBase
     [HttpPost(Name = "AddOuder")]
     public async Task<ActionResult<Ouder>> AddAsync(Ouder ouder)
     {
+        var userIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+
+        if (string.IsNullOrEmpty(userIdClaim))
+            return Unauthorized("Geen geldige gebruikerssessie gevonden.");
+
         ouder.OuderID = Guid.NewGuid();
+        ouder.AccountID = userIdClaim;
 
         await _iOuder.InsertAsync(ouder);
 
@@ -53,8 +59,8 @@ public class OuderController : ControllerBase
         if (existing == null)
             return NotFound(new ProblemDetails { Detail = $"Ouder {ouderID} not found" });
 
-        if (ouder.OuderID != ouderID)
-            return Conflict(new ProblemDetails { Detail = "The id of the Ouder in the route does not match the id of the Ouder in the body" });
+        ouder.OuderID = ouderID;
+        ouder.AccountID = existing.AccountID;
 
         await _iOuder.UpdateAsync(ouder);
 

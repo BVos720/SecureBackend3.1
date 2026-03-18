@@ -18,8 +18,8 @@ namespace MySecureBackend.WebApi.Repositories
             using (var sqlConnection = new SqlConnection(sqlConnectionString))
             {
                 await sqlConnection.ExecuteAsync(
-                    "INSERT INTO [Behandeling] (BehandelingID, GameProgressID, Type, Datum) " +
-                    "VALUES (@BehandelingID, @GameProgressID, @Type, @Datum)",
+                    "INSERT INTO [Behandeling] (BehandelingID, Type, Datum, Arts, KindID) " +
+                    "VALUES (@BehandelingID, @Type, @Datum, @Arts, @KindID)",
                     behandeling);
             }
         }
@@ -29,8 +29,18 @@ namespace MySecureBackend.WebApi.Repositories
             using (var sqlConnection = new SqlConnection(sqlConnectionString))
             {
                 return await sqlConnection.QuerySingleOrDefaultAsync<Behandeling>(
-                    "SELECT BehandelingID, GameProgressID, Type, Datum FROM [Behandeling] WHERE BehandelingID = @GUID",
+                    "SELECT BehandelingID, Type, Datum, Arts, KindID FROM [Behandeling] WHERE BehandelingID = @GUID",
                     new { GUID });
+            }
+        }
+
+        public async Task<Behandeling?> SelectByKindIdAsync(Guid kindID)
+        {
+            using (var sqlConnection = new SqlConnection(sqlConnectionString))
+            {
+                return await sqlConnection.QueryFirstOrDefaultAsync<Behandeling>(
+                    "SELECT BehandelingID, Type, Datum, Arts, KindID FROM [Behandeling] WHERE KindID = @kindID",
+                    new { kindID });
             }
         }
 
@@ -39,7 +49,7 @@ namespace MySecureBackend.WebApi.Repositories
             using (var sqlConnection = new SqlConnection(sqlConnectionString))
             {
                 return await sqlConnection.QueryAsync<Behandeling>(
-                    "SELECT BehandelingID, GameProgressID, Type, Datum FROM [Behandeling]");
+                    "SELECT BehandelingID, Type, Datum, Arts, KindID FROM [Behandeling]");
             }
         }
 
@@ -49,9 +59,10 @@ namespace MySecureBackend.WebApi.Repositories
             {
                 await sqlConnection.ExecuteAsync(
                     "UPDATE [Behandeling] SET " +
-                    "GameProgressID = @GameProgressID, " +
                     "Type = @Type, " +
-                    "Datum = @Datum " +
+                    "Datum = @Datum, " +
+                    "Arts = @Arts, " +
+                    "KindID = @KindID " +
                     "WHERE BehandelingID = @BehandelingID",
                     behandeling);
             }

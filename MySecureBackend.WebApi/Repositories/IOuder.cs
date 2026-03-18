@@ -8,6 +8,7 @@ namespace MySecureBackend.WebApi.Repositories
         Task deleteAsync(Guid GUID);
         Task<IEnumerable<Ouder>> SelectAsync();
         Task<Ouder?> SelectAsync(Guid GUID);
+        Task<Ouder?> SelectByAccountIdAsync(string accountId);
         Task UpdateAsync(Ouder ouder);
     }
 }

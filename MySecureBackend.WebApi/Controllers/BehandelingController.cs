@@ -12,10 +12,14 @@ namespace MySecureBackend.WebApi.Controllers;
 public class BehandelingController : ControllerBase
 {
     private readonly IBehandeling _iBehandeling;
+    private readonly IOuder _iOuder;
+    private readonly IKind _iKind;
 
-    public BehandelingController(IBehandeling behandelingRepository)
+    public BehandelingController(IBehandeling behandelingRepository, IOuder ouderRepository, IKind kindRepository)
     {
         _iBehandeling = behandelingRepository;
+        _iOuder = ouderRepository;
+        _iKind = kindRepository;
     }
 
     [HttpGet(Name = "GetBehandelingen")]
@@ -39,7 +43,21 @@ public class BehandelingController : ControllerBase
     [HttpPost(Name = "AddBehandeling")]
     public async Task<ActionResult<Behandeling>> AddAsync(Behandeling behandeling)
     {
+        var userIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+
+        if (string.IsNullOrEmpty(userIdClaim))
+            return Unauthorized("Geen geldige gebruikerssessie gevonden.");
+
+        var ouder = await _iOuder.SelectByAccountIdAsync(userIdClaim);
+        if (ouder == null)
+            return NotFound(new ProblemDetails { Detail = "Geen ouder gevonden voor de ingelogde gebruiker." });
+
+        var kind = await _iKind.SelectByOuderIdAsync(ouder.OuderID);
+        if (kind == null)
+            return NotFound(new ProblemDetails { Detail = "Geen kind gevonden voor de ingelogde gebruiker." });
+
         behandeling.BehandelingID = Guid.NewGuid();
+        behandeling.KindID = kind.KindID;
 
         await _iBehandeling.InsertAsync(behandeling);
 
@@ -53,8 +71,8 @@ public class BehandelingController : ControllerBase
         if (existing == null)
             return NotFound(new ProblemDetails { Detail = $"Behandeling {behandelingID} not found" });
 
-        if (behandeling.BehandelingID != behandelingID)
-            return Conflict(new ProblemDetails { Detail = "The id of the Behandeling in the route does not match the id of the Behandeling in the body" });
+        behandeling.BehandelingID = behandelingID;
+        behandeling.KindID = existing.KindID;
 
         await _iBehandeling.UpdateAsync(behandeling);
 

@@ -18,8 +18,8 @@ namespace MySecureBackend.WebApi.Repositories
             using (var sqlConnection = new SqlConnection(sqlConnectionString))
             {
                 await sqlConnection.ExecuteAsync(
-                    "INSERT INTO [Kind] (KindID, BehandelingID, Naam, Leeftijd) " +
-                    "VALUES (@KindID, @BehandelingID, @Naam, @Leeftijd)",
+                    "INSERT INTO [Kind] (KindID, Naam, Leeftijd, OuderID) " +
+                    "VALUES (@KindID, @Naam, @Leeftijd, @OuderID)",
                     kind);
             }
         }
@@ -29,8 +29,18 @@ namespace MySecureBackend.WebApi.Repositories
             using (var sqlConnection = new SqlConnection(sqlConnectionString))
             {
                 return await sqlConnection.QuerySingleOrDefaultAsync<Kind>(
-                    "SELECT KindID, BehandelingID, Naam, Leeftijd FROM [Kind] WHERE KindID = @GUID",
+                    "SELECT KindID, Naam, Leeftijd, OuderID FROM [Kind] WHERE KindID = @GUID",
                     new { GUID });
+            }
+        }
+
+        public async Task<Kind?> SelectByOuderIdAsync(Guid ouderID)
+        {
+            using (var sqlConnection = new SqlConnection(sqlConnectionString))
+            {
+                return await sqlConnection.QueryFirstOrDefaultAsync<Kind>(
+                    "SELECT KindID, Naam, Leeftijd, OuderID FROM [Kind] WHERE OuderID = @ouderID",
+                    new { ouderID });
             }
         }
 
@@ -39,7 +49,7 @@ namespace MySecureBackend.WebApi.Repositories
             using (var sqlConnection = new SqlConnection(sqlConnectionString))
             {
                 return await sqlConnection.QueryAsync<Kind>(
-                    "SELECT KindID, BehandelingID, Naam, Leeftijd FROM [Kind]");
+                    "SELECT KindID, Naam, Leeftijd, OuderID FROM [Kind]");
             }
         }
 
@@ -49,9 +59,9 @@ namespace MySecureBackend.WebApi.Repositories
             {
                 await sqlConnection.ExecuteAsync(
                     "UPDATE [Kind] SET " +
-                    "BehandelingID = @BehandelingID, " +
                     "Naam = @Naam, " +
-                    "Leeftijd = @Leeftijd " +
+                    "Leeftijd = @Leeftijd, " +
+                    "OuderID = @OuderID " +
                     "WHERE KindID = @KindID",
                     kind);
             }

@@ -12,10 +12,16 @@ namespace MySecureBackend.WebApi.Controllers;
 public class GameProgressController : ControllerBase
 {
     private readonly IGameProgress _iGameProgress;
+    private readonly IOuder _iOuder;
+    private readonly IKind _iKind;
+    private readonly IBehandeling _iBehandeling;
 
-    public GameProgressController(IGameProgress gameProgressRepository)
+    public GameProgressController(IGameProgress gameProgressRepository, IOuder ouderRepository, IKind kindRepository, IBehandeling behandelingRepository)
     {
         _iGameProgress = gameProgressRepository;
+        _iOuder = ouderRepository;
+        _iKind = kindRepository;
+        _iBehandeling = behandelingRepository;
     }
 
     [HttpGet(Name = "GetGameProgresses")]
@@ -39,7 +45,25 @@ public class GameProgressController : ControllerBase
     [HttpPost(Name = "AddGameProgress")]
     public async Task<ActionResult<GameProgress>> AddAsync(GameProgress gameProgress)
     {
+        var userIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+
+        if (string.IsNullOrEmpty(userIdClaim))
+            return Unauthorized("Geen geldige gebruikerssessie gevonden.");
+
+        var ouder = await _iOuder.SelectByAccountIdAsync(userIdClaim);
+        if (ouder == null)
+            return NotFound(new ProblemDetails { Detail = "Geen ouder gevonden voor de ingelogde gebruiker." });
+
+        var kind = await _iKind.SelectByOuderIdAsync(ouder.OuderID);
+        if (kind == null)
+            return NotFound(new ProblemDetails { Detail = "Geen kind gevonden voor de ingelogde gebruiker." });
+
+        var behandeling = await _iBehandeling.SelectByKindIdAsync(kind.KindID);
+        if (behandeling == null)
+            return NotFound(new ProblemDetails { Detail = "Geen behandeling gevonden voor de ingelogde gebruiker." });
+
         gameProgress.GameProgressID = Guid.NewGuid();
+        gameProgress.BehandelingID = behandeling.BehandelingID;
 
         await _iGameProgress.InsertAsync(gameProgress);
 
@@ -53,8 +77,8 @@ public class GameProgressController : ControllerBase
         if (existing == null)
             return NotFound(new ProblemDetails { Detail = $"GameProgress {gameProgressID} not found" });
 
-        if (gameProgress.GameProgressID != gameProgressID)
-            return Conflict(new ProblemDetails { Detail = "The id of the GameProgress in the route does not match the id of the GameProgress in the body" });
+        gameProgress.GameProgressID = gameProgressID;
+        gameProgress.BehandelingID = existing.BehandelingID;
 
         await _iGameProgress.UpdateAsync(gameProgress);
 

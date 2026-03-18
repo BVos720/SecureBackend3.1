@@ -12,10 +12,12 @@ namespace MySecureBackend.WebApi.Controllers;
 public class KindController : ControllerBase
 {
     private readonly IKind _iKind;
+    private readonly IOuder _iOuder;
 
-    public KindController(IKind kindRepository)
+    public KindController(IKind kindRepository, IOuder ouderRepository)
     {
         _iKind = kindRepository;
+        _iOuder = ouderRepository;
     }
 
     [HttpGet(Name = "GetKinderen")]
@@ -39,7 +41,18 @@ public class KindController : ControllerBase
     [HttpPost(Name = "AddKind")]
     public async Task<ActionResult<Kind>> AddAsync(Kind kind)
     {
+        var userIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+
+        if (string.IsNullOrEmpty(userIdClaim))
+            return Unauthorized("Geen geldige gebruikerssessie gevonden.");
+
+        var ouder = await _iOuder.SelectByAccountIdAsync(userIdClaim);
+
+        if (ouder == null)
+            return NotFound(new ProblemDetails { Detail = "Geen ouder gevonden voor de ingelogde gebruiker." });
+
         kind.KindID = Guid.NewGuid();
+        kind.OuderID = ouder.OuderID;
 
         await _iKind.InsertAsync(kind);
 
@@ -53,8 +66,8 @@ public class KindController : ControllerBase
         if (existing == null)
             return NotFound(new ProblemDetails { Detail = $"Kind {kindID} not found" });
 
-        if (kind.KindID != kindID)
-            return Conflict(new ProblemDetails { Detail = "The id of the Kind in the route does not match the id of the Kind in the body" });
+        kind.KindID = kindID;
+        kind.OuderID = existing.OuderID;
 
         await _iKind.UpdateAsync(kind);
 

@@ -18,8 +18,8 @@ namespace MySecureBackend.WebApi.Repositories
             using (var sqlConnection = new SqlConnection(sqlConnectionString))
             {
                 await sqlConnection.ExecuteAsync(
-                    "INSERT INTO [Ouder] (OuderID, KindID, Naam, Email) " +
-                    "VALUES (@OuderID, @KindID, @Naam, @Email)",
+                    "INSERT INTO [Ouder] (OuderID, Naam, AccountID) " +
+                    "VALUES (@OuderID, @Naam, @AccountID)",
                     ouder);
             }
         }
@@ -29,8 +29,18 @@ namespace MySecureBackend.WebApi.Repositories
             using (var sqlConnection = new SqlConnection(sqlConnectionString))
             {
                 return await sqlConnection.QuerySingleOrDefaultAsync<Ouder>(
-                    "SELECT OuderID, KindID, Naam, Email FROM [Ouder] WHERE OuderID = @GUID",
+                    "SELECT OuderID, Naam, AccountID FROM [Ouder] WHERE OuderID = @GUID",
                     new { GUID });
+            }
+        }
+
+        public async Task<Ouder?> SelectByAccountIdAsync(string accountId)
+        {
+            using (var sqlConnection = new SqlConnection(sqlConnectionString))
+            {
+                return await sqlConnection.QuerySingleOrDefaultAsync<Ouder>(
+                    "SELECT OuderID, Naam, AccountID FROM [Ouder] WHERE AccountID = @accountId",
+                    new { accountId });
             }
         }
 
@@ -39,7 +49,7 @@ namespace MySecureBackend.WebApi.Repositories
             using (var sqlConnection = new SqlConnection(sqlConnectionString))
             {
                 return await sqlConnection.QueryAsync<Ouder>(
-                    "SELECT OuderID, KindID, Naam, Email FROM [Ouder]");
+                    "SELECT OuderID, Naam, AccountID FROM [Ouder]");
             }
         }
 
@@ -49,9 +59,8 @@ namespace MySecureBackend.WebApi.Repositories
             {
                 await sqlConnection.ExecuteAsync(
                     "UPDATE [Ouder] SET " +
-                    "KindID = @KindID, " +
                     "Naam = @Naam, " +
-                    "Email = @Email " +
+                    "AccountID = @AccountID " +
                     "WHERE OuderID = @OuderID",
                     ouder);
             }

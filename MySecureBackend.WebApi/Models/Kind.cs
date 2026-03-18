@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Mvc.ModelBinding.Validation;
 using System.ComponentModel.DataAnnotations;
 
 namespace MySecureBackend.WebApi.Models
@@ -7,10 +8,10 @@ namespace MySecureBackend.WebApi.Models
         [Required]
         public Guid KindID { get; set; }
         [Required]
-        public Guid BehandelingID { get; set; }
-        [Required]
         public string Naam { get; set; }
         [Required]
         public int Leeftijd { get; set; }
+        [ValidateNever] 
+        public Guid OuderID { get; set; }
     }
 }

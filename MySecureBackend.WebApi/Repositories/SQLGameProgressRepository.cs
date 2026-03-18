@@ -18,8 +18,8 @@ namespace MySecureBackend.WebApi.Repositories
             using (var sqlConnection = new SqlConnection(sqlConnectionString))
             {
                 await sqlConnection.ExecuteAsync(
-                    "INSERT INTO [Game Progress] (GameProgressID, LevelProgress, Points) " +
-                    "VALUES (@GameProgressID, @LevelProgress, @Points)",
+                    "INSERT INTO [Game Progress] (GameProgressID, LevelProgress, points, BehandelingID) " +
+                    "VALUES (@GameProgressID, @LevelProgress, @Points, @BehandelingID)",
                     gameProgress);
             }
         }
@@ -29,7 +29,7 @@ namespace MySecureBackend.WebApi.Repositories
             using (var sqlConnection = new SqlConnection(sqlConnectionString))
             {
                 return await sqlConnection.QuerySingleOrDefaultAsync<GameProgress>(
-                    "SELECT GameProgressID, LevelProgress, Points FROM [Game Progress] WHERE GameProgressID = @GUID",
+                    "SELECT GameProgressID, LevelProgress, points, BehandelingID FROM [Game Progress] WHERE GameProgressID = @GUID",
                     new { GUID });
             }
         }
@@ -39,7 +39,7 @@ namespace MySecureBackend.WebApi.Repositories
             using (var sqlConnection = new SqlConnection(sqlConnectionString))
             {
                 return await sqlConnection.QueryAsync<GameProgress>(
-                    "SELECT GameProgressID, LevelProgress, Points FROM [Game Progress]");
+                    "SELECT GameProgressID, LevelProgress, points, BehandelingID FROM [Game Progress]");
             }
         }
 
@@ -50,7 +50,8 @@ namespace MySecureBackend.WebApi.Repositories
                 await sqlConnection.ExecuteAsync(
                     "UPDATE [Game Progress] SET " +
                     "LevelProgress = @LevelProgress, " +
-                    "Points = @Points " +
+                    "points = @Points, " +
+                    "BehandelingID = @BehandelingID " +
                     "WHERE GameProgressID = @GameProgressID",
                     gameProgress);
             }
