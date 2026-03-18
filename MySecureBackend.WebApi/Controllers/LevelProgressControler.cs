@@ -19,6 +19,7 @@ public class Enviroment2DControler : ControllerBase
     {
         _ipatient = enviromentRepository;
         _ipatients = objectRepository;
+
         _authenticationService = authenticationService;
     }
 
