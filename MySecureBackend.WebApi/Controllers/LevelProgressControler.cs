@@ -11,11 +11,11 @@ namespace MySecureBackend.WebApi.Controllers;
 [Produces("application/json")]
 public class Enviroment2DControler : ControllerBase
 {
-    private readonly IPatient _ipatient;
-    private readonly IPatient _ipatients;
+    private readonly ILevelProgress _ipatient;
+    private readonly ILevelProgress _ipatients;
     private readonly IAuthenticationService _authenticationService;
 
-    public Enviroment2DControler(IPatient enviromentRepository, IPatient objectRepository, IAuthenticationService authenticationService)
+    public Enviroment2DControler(ILevelProgress enviromentRepository, ILevelProgress objectRepository, IAuthenticationService authenticationService)
     {
         _ipatient = enviromentRepository;
         _ipatients = objectRepository;

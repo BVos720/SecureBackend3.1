@@ -7,12 +7,14 @@ namespace MySecureBackend.WebApi.Models
     public class LevelProgress
     {
         [Required]
-        public Guid LevelProgressId { get; set; }
+        public Guid Id { get; set; }
+        [Required]
+        public string Name { get; set; }
         [Required]
         public float LevelProgressValue { get; set; }
         [Required]
         public int Points { get; set; }
         [ValidateNever]
-        public string UserID { get; set; } 
+        public string UserID { get; set; }
     }
 }

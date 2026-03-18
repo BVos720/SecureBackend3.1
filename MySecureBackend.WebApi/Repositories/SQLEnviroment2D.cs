@@ -18,8 +18,8 @@ namespace MySecureBackend.WebApi.Repositories
             using (var sqlConnection = new SqlConnection(sqlConnectionString))
             {
                 await sqlConnection.ExecuteAsync(
-                    "INSERT INTO [LevelProgress] (LevelProgressId, LevelProgressValue, Points, UserID) " +
-                    "VALUES (@LevelProgressId, @LevelProgressValue, @Points, @UserID)",
+                    "INSERT INTO [LevelProgress] (LevelProgressId, Name, LevelProgressValue, Points, UserID) " +
+                    "VALUES (@Id, @Name, @LevelProgressValue, @Points, @UserID)",
                     levelProgress);
             }
         }
@@ -28,7 +28,7 @@ namespace MySecureBackend.WebApi.Repositories
         {
             using (var sqlConnection = new SqlConnection(sqlConnectionString))
             {
-                string sql = "SELECT LevelProgressId, LevelProgressValue, Points, UserID FROM [LevelProgress] WHERE LevelProgressId = @GUID";
+                string sql = "SELECT LevelProgressId AS Id, Name, LevelProgressValue, Points, UserID FROM [LevelProgress] WHERE LevelProgressId = @GUID";
 
                 return await sqlConnection.QuerySingleOrDefaultAsync<LevelProgress>(sql, new { GUID = GUID.ToString() });
             }
@@ -38,7 +38,7 @@ namespace MySecureBackend.WebApi.Repositories
         {
             using (var sqlConnection = new SqlConnection(sqlConnectionString))
             {
-                string sql = "SELECT LevelProgressId, LevelProgressValue, Points, UserID FROM [LevelProgress]";
+                string sql = "SELECT LevelProgressId AS Id, Name, LevelProgressValue, Points, UserID FROM [LevelProgress]";
 
                 return await sqlConnection.QueryAsync<LevelProgress>(sql);
             }
@@ -48,7 +48,7 @@ namespace MySecureBackend.WebApi.Repositories
         {
             using (var sqlConnection = new SqlConnection(sqlConnectionString))
             {
-                string sql = "SELECT LevelProgressId, LevelProgressValue, Points, UserID FROM [LevelProgress] WHERE UserID = @userId";
+                string sql = "SELECT LevelProgressId AS Id, Name, LevelProgressValue, Points, UserID FROM [LevelProgress] WHERE UserID = @userId";
 
                 return await sqlConnection.QueryAsync<LevelProgress>(sql, new { userId });
             }
@@ -60,9 +60,10 @@ namespace MySecureBackend.WebApi.Repositories
             {
                 await sqlConnection.ExecuteAsync(
                     "UPDATE [LevelProgress] SET " +
+                    "Name = @Name, " +
                     "LevelProgressValue = @LevelProgressValue, " +
                     "Points = @Points " +
-                    "WHERE LevelProgressId = @LevelProgressId",
+                    "WHERE LevelProgressId = @Id",
                     levelProgress);
             }
         }
@@ -72,6 +73,14 @@ namespace MySecureBackend.WebApi.Repositories
             using (var sqlConnection = new SqlConnection(sqlConnectionString))
             {
                 await sqlConnection.ExecuteAsync("DELETE FROM [LevelProgress] WHERE LevelProgressId = @GUID", new { GUID });
+            }
+        }
+
+        public async Task DeleteByEnvironmentAsync(Guid environmentId)
+        {
+            using (var sqlConnection = new SqlConnection(sqlConnectionString))
+            {
+                await sqlConnection.ExecuteAsync("DELETE FROM [LevelProgress] WHERE LevelProgressId = @environmentId", new { environmentId });
             }
         }
     }
