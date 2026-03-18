@@ -6,6 +6,8 @@ using MySecureBackend.WebApi.Services;
 using System.Data;
 using System.Reflection;
 
+//test comment hushdh
+
 SqlMapper.AddTypeHandler(new GuidTypeHandler());
 
 var builder = WebApplication.CreateBuilder(args);
