@@ -21,7 +21,8 @@ namespace MySecureBackend.Tests
             {
                 var levelProgress = new LevelProgress
                 {
-                    LevelProgressId = Guid.NewGuid(),
+                    Id = Guid.NewGuid(),
+                    Name = "TestLevel",
                     LevelProgressValue = 75.5f,
                     Points = 100
                 };
