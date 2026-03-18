@@ -14,7 +14,7 @@ namespace MySecureBackend.Tests
     namespace SecureBackendTests
     {
         [TestClass]
-        public class Enviroment2DTests
+        public class Test
         {
             [TestMethod]
             public void IsLevelProgressGeldig_MetVerplichtVelden()
@@ -53,11 +53,7 @@ namespace MySecureBackend.Tests
 
                 Assert.IsFalse(isValid);
             }
-        }
 
-        [TestClass]
-        public class Object2DTests
-        {
             [TestMethod]
             public void IsPatientAchternaamLeeg_Ongeldig()
             {
