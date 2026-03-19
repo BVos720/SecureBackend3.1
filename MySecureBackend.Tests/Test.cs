@@ -60,71 +60,67 @@ namespace MySecureBackend.Tests
             }
 
             [TestMethod]
-            public void IsPatientVoornaamLeeg_Ongeldig()
+            public void IsOuderNaamLeeg_Ongeldig()
             {
-                var patient = new Patient
+                var ouder = new Ouder
                 {
-                    PatientID = Guid.NewGuid(),
-                    voornaam = "",
-                    achternaam = "Testachternaam",
-                    Leeftijd = 30
+                    OuderID = Guid.NewGuid(),
+                    Naam = ""
                 };
 
-                var dossier = new ValidationContext(patient);
+                var dossier = new ValidationContext(ouder);
                 var results = new List<ValidationResult>();
 
-                bool isValid = Validator.TryValidateObject(patient, dossier, results, true);
+                bool isValid = Validator.TryValidateObject(ouder, dossier, results, true);
 
                 Assert.IsFalse(isValid);
             }
 
             [TestMethod]
-            public void IsPatientAchternaamLeeg_Ongeldig()
+            public void IsOuderNaamGeldig()
             {
-                var patient = new Patient
+                var ouder = new Ouder
                 {
-                    PatientID = Guid.NewGuid(),
-                    voornaam = "Testvoornaam",
-                    achternaam = "",
-                    Leeftijd = 25
+                    OuderID = Guid.NewGuid(),
+                    Naam = "Jan de Vries"
                 };
 
-                var dossier = new ValidationContext(patient);
+                var dossier = new ValidationContext(ouder);
                 var results = new List<ValidationResult>();
 
-                bool isValid = Validator.TryValidateObject(patient, dossier, results, true);
+                bool isValid = Validator.TryValidateObject(ouder, dossier, results, true);
 
-                Assert.IsFalse(isValid);
+                Assert.IsTrue(isValid);
             }
 
         [TestMethod]
-        public void IsPatientZonderVoornaam_Ongeldig()
+        public void IsKindNaamLeeg_Ongeldig()
         {
-            var patient = new Patient
+            var kind = new MySecureBackend.WebApi.Models.Kind
             {
-                PatientID = Guid.NewGuid(),
-                achternaam = "Jansen",
-                Leeftijd = 40
+                KindID = Guid.NewGuid(),
+                Naam = "",
+                Leeftijd = 10
             };
-            var dossier = new ValidationContext(patient);
+            var dossier = new ValidationContext(kind);
             var results = new List<ValidationResult>();
-            bool isValid = Validator.TryValidateObject(patient, dossier, results, true);
+            bool isValid = Validator.TryValidateObject(kind, dossier, results, true);
             Assert.IsFalse(isValid);
         }
 
         [TestMethod]
-        public void IsPatientZonderAchternaam_Ongeldig()
+        public void IsKindNaamGeldig()
         {
-            var patient = new Patient
+            var kind = new MySecureBackend.WebApi.Models.Kind
             {
-                PatientID = Guid.NewGuid(),
-                voornaam = "Jan",
-                Leeftijd = 40
+                KindID = Guid.NewGuid(),
+                Naam = "Emma",
+                Leeftijd = 10
             };
-            var dossier = new ValidationContext(patient);
+            var dossier = new ValidationContext(kind);
             var results = new List<ValidationResult>();
-            bool isValid = Validator.TryValidateObject(patient, dossier, results, true);
-            Assert.IsFalse(isValid);
+            bool isValid = Validator.TryValidateObject(kind, dossier, results, true);
+            Assert.IsTrue(isValid);
         }
 
         [TestMethod]
@@ -146,7 +142,6 @@ namespace MySecureBackend.Tests
         {
             var user = new User
             {
-                Username = "",
                 Username = "",
                 Password = ""
             };
