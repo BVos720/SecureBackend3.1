@@ -54,7 +54,6 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddTransient<IAuthenticationService, AspNetIdentityAuthenticationService>();
 
 //builder.Services.AddTransient<IEnviroment2D, MemoryEnviromentRepository>();
-builder.Services.AddTransient<ILevelProgress, SQLGameObjectRepository>(o => new SQLGameObjectRepository(sqlConnectionString!));
 builder.Services.AddTransient<IGameProgress, SQLGameProgressRepository>(o => new SQLGameProgressRepository(sqlConnectionString!));
 builder.Services.AddTransient<IBehandeling, SQLBehandelingRepository>(o => new SQLBehandelingRepository(sqlConnectionString!));
 builder.Services.AddTransient<IKind, SQLKindRepository>(o => new SQLKindRepository(sqlConnectionString!));
