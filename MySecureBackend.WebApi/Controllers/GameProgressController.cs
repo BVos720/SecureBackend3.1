@@ -27,17 +27,54 @@ public class GameProgressController : ControllerBase
     [HttpGet(Name = "GetGameProgresses")]
     public async Task<ActionResult<List<GameProgress>>> GetAsync()
     {
+        var userIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+
+        if (string.IsNullOrEmpty(userIdClaim))
+            return Unauthorized("Geen geldige gebruikerssessie gevonden.");
+
+        var ouder = await _iOuder.SelectByAccountIdAsync(userIdClaim);
+        if (ouder == null)
+            return NotFound(new ProblemDetails { Detail = "Geen ouder gevonden voor de ingelogde gebruiker." });
+
+        var kind = await _iKind.SelectByOuderIdAsync(ouder.OuderID);
+        if (kind == null)
+            return NotFound(new ProblemDetails { Detail = "Geen kind gevonden voor de ingelogde gebruiker." });
+
+        var behandeling = await _iBehandeling.SelectByKindIdAsync(kind.KindID);
+        if (behandeling == null)
+            return NotFound(new ProblemDetails { Detail = "Geen behandeling gevonden voor de ingelogde gebruiker." });
+
         var gameProgresses = await _iGameProgress.SelectAsync();
-        return Ok(gameProgresses);
+        return Ok(gameProgresses.Where(g => g.BehandelingID == behandeling.BehandelingID).ToList());
     }
 
     [HttpGet("{gameProgressID}", Name = "GetGameProgressById")]
     public async Task<ActionResult<GameProgress>> GetByIdAsync(Guid gameProgressID)
     {
+        var userIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+
+        if (string.IsNullOrEmpty(userIdClaim))
+            return Unauthorized("Geen geldige gebruikerssessie gevonden.");
+
+        var ouder = await _iOuder.SelectByAccountIdAsync(userIdClaim);
+        if (ouder == null)
+            return NotFound(new ProblemDetails { Detail = "Geen ouder gevonden voor de ingelogde gebruiker." });
+
+        var kind = await _iKind.SelectByOuderIdAsync(ouder.OuderID);
+        if (kind == null)
+            return NotFound(new ProblemDetails { Detail = "Geen kind gevonden voor de ingelogde gebruiker." });
+
+        var behandeling = await _iBehandeling.SelectByKindIdAsync(kind.KindID);
+        if (behandeling == null)
+            return NotFound(new ProblemDetails { Detail = "Geen behandeling gevonden voor de ingelogde gebruiker." });
+
         var gameProgress = await _iGameProgress.SelectAsync(gameProgressID);
 
         if (gameProgress == null)
             return NotFound(new ProblemDetails { Detail = $"GameProgress {gameProgressID} not found" });
+
+        if (gameProgress.BehandelingID != behandeling.BehandelingID)
+            return Forbid();
 
         return Ok(gameProgress);
     }
@@ -73,9 +110,29 @@ public class GameProgressController : ControllerBase
     [HttpPut("{gameProgressID}", Name = "UpdateGameProgress")]
     public async Task<ActionResult<GameProgress>> UpdateAsync(Guid gameProgressID, GameProgress gameProgress)
     {
+        var userIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+
+        if (string.IsNullOrEmpty(userIdClaim))
+            return Unauthorized("Geen geldige gebruikerssessie gevonden.");
+
+        var ouder = await _iOuder.SelectByAccountIdAsync(userIdClaim);
+        if (ouder == null)
+            return NotFound(new ProblemDetails { Detail = "Geen ouder gevonden voor de ingelogde gebruiker." });
+
+        var kind = await _iKind.SelectByOuderIdAsync(ouder.OuderID);
+        if (kind == null)
+            return NotFound(new ProblemDetails { Detail = "Geen kind gevonden voor de ingelogde gebruiker." });
+
+        var behandeling = await _iBehandeling.SelectByKindIdAsync(kind.KindID);
+        if (behandeling == null)
+            return NotFound(new ProblemDetails { Detail = "Geen behandeling gevonden voor de ingelogde gebruiker." });
+
         var existing = await _iGameProgress.SelectAsync(gameProgressID);
         if (existing == null)
             return NotFound(new ProblemDetails { Detail = $"GameProgress {gameProgressID} not found" });
+
+        if (existing.BehandelingID != behandeling.BehandelingID)
+            return Forbid();
 
         gameProgress.GameProgressID = gameProgressID;
         gameProgress.BehandelingID = existing.BehandelingID;
@@ -88,10 +145,30 @@ public class GameProgressController : ControllerBase
     [HttpDelete("{gameProgressID}", Name = "DeleteGameProgress")]
     public async Task<ActionResult> DeleteAsync(Guid gameProgressID)
     {
+        var userIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
+
+        if (string.IsNullOrEmpty(userIdClaim))
+            return Unauthorized("Geen geldige gebruikerssessie gevonden.");
+
+        var ouder = await _iOuder.SelectByAccountIdAsync(userIdClaim);
+        if (ouder == null)
+            return NotFound(new ProblemDetails { Detail = "Geen ouder gevonden voor de ingelogde gebruiker." });
+
+        var kind = await _iKind.SelectByOuderIdAsync(ouder.OuderID);
+        if (kind == null)
+            return NotFound(new ProblemDetails { Detail = "Geen kind gevonden voor de ingelogde gebruiker." });
+
+        var behandeling = await _iBehandeling.SelectByKindIdAsync(kind.KindID);
+        if (behandeling == null)
+            return NotFound(new ProblemDetails { Detail = "Geen behandeling gevonden voor de ingelogde gebruiker." });
+
         var gameProgress = await _iGameProgress.SelectAsync(gameProgressID);
 
         if (gameProgress == null)
             return NotFound(new ProblemDetails { Detail = $"GameProgress {gameProgressID} not found" });
+
+        if (gameProgress.BehandelingID != behandeling.BehandelingID)
+            return Forbid();
 
         await _iGameProgress.deleteAsync(gameProgressID);
 
