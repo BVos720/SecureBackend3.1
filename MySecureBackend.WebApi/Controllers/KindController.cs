@@ -131,7 +131,7 @@ public class KindController : ControllerBase
         if (kind.OuderID != ouder.OuderID)
             return Forbid();
 
-        await _iKind.deleteAsync(kindID);
+        await _iKind.DeleteAsync(kindID);
 
         return Ok();
     }

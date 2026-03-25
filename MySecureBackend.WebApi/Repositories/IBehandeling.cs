@@ -5,7 +5,7 @@ namespace MySecureBackend.WebApi.Repositories
     public interface IBehandeling
     {
         Task InsertAsync(Behandeling behandeling);
-        Task deleteAsync(Guid GUID);
+        Task DeleteAsync(Guid GUID);
         Task<IEnumerable<Behandeling>> SelectAsync();
         Task<Behandeling?> SelectAsync(Guid GUID);
         Task<Behandeling?> SelectByKindIdAsync(Guid kindID);

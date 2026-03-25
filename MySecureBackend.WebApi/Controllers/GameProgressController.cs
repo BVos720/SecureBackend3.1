@@ -170,7 +170,7 @@ public class GameProgressController : ControllerBase
         if (gameProgress.BehandelingID != behandeling.BehandelingID)
             return Forbid();
 
-        await _iGameProgress.deleteAsync(gameProgressID);
+        await _iGameProgress.DeleteAsync(gameProgressID);
 
         return Ok();
     }
