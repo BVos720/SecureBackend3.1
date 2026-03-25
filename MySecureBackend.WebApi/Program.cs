@@ -58,6 +58,7 @@ builder.Services.AddTransient<IGameProgress, SQLGameProgressRepository>(o => new
 builder.Services.AddTransient<IBehandeling, SQLBehandelingRepository>(o => new SQLBehandelingRepository(sqlConnectionString!));
 builder.Services.AddTransient<IKind, SQLKindRepository>(o => new SQLKindRepository(sqlConnectionString!));
 builder.Services.AddTransient<IOuder, SQLOuderRepository>(o => new SQLOuderRepository(sqlConnectionString!));
+builder.Services.AddTransient<ISettings, SQLSettingsRepository>(o => new SQLSettingsRepository(sqlConnectionString!));
 
 var app = builder.Build();
 

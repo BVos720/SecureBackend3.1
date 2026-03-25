@@ -131,6 +131,31 @@ SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
 GO
+/****** Object:  Table [dbo].[Settings]    ******/
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+CREATE TABLE [dbo].[Settings](
+	[SettingsID] [varchar](50) NOT NULL,
+	[Character] [int] NOT NULL,
+	[Taal] [varchar](50) NULL,
+	[Dyslexie] [bit] NULL,
+	[Color Theme] [int] NULL,
+	[KindID] [nvarchar](450) NOT NULL,
+ CONSTRAINT [PK_Settings] PRIMARY KEY CLUSTERED
+(
+	[SettingsID] ASC
+)WITH (STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+) ON [PRIMARY]
+GO
+SET ANSI_PADDING ON
+GO
+CREATE NONCLUSTERED INDEX [IX_Settings_KindID] ON [dbo].[Settings]
+(
+	[KindID] ASC
+)WITH (STATISTICS_NORECOMPUTE = OFF, DROP_EXISTING = OFF, ONLINE = OFF, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
+GO
 ALTER TABLE [auth].[AspNetRoleClaims]  WITH CHECK ADD  CONSTRAINT [FK_AspNetRoleClaims_AspNetRoles_RoleId] FOREIGN KEY([RoleId])
 REFERENCES [auth].[AspNetRoles] ([Id])
 ON DELETE CASCADE
@@ -166,5 +191,11 @@ REFERENCES [auth].[AspNetUsers] ([Id])
 ON DELETE CASCADE
 GO
 ALTER TABLE [auth].[AspNetUserTokens] CHECK CONSTRAINT [FK_AspNetUserTokens_AspNetUsers_UserId]
+GO
+ALTER TABLE [dbo].[Settings]  WITH CHECK ADD  CONSTRAINT [FK_Settings_Kind] FOREIGN KEY([KindID])
+REFERENCES [dbo].[Kind] ([KindID])
+ON DELETE CASCADE
+GO
+ALTER TABLE [dbo].[Settings] CHECK CONSTRAINT [FK_Settings_Kind]
 GO
 
