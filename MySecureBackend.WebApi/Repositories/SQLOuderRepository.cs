@@ -66,7 +66,7 @@ namespace MySecureBackend.WebApi.Repositories
             }
         }
 
-        public async Task deleteAsync(Guid GUID)
+        public async Task DeleteAsync(Guid GUID)
         {
             using (var sqlConnection = new SqlConnection(sqlConnectionString))
             {

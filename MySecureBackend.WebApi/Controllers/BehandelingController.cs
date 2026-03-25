@@ -148,7 +148,7 @@ public class BehandelingController : ControllerBase
         if (behandeling.KindID != kind.KindID)
             return Forbid();
 
-        await _iBehandeling.deleteAsync(behandelingID);
+        await _iBehandeling.DeleteAsync(behandelingID);
 
         return Ok();
     }

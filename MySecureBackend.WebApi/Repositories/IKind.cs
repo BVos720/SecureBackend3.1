@@ -5,7 +5,7 @@ namespace MySecureBackend.WebApi.Repositories
     public interface IKind
     {
         Task InsertAsync(Kind kind);
-        Task deleteAsync(Guid GUID);
+        Task DeleteAsync(Guid GUID);
         Task<IEnumerable<Kind>> SelectAsync();
         Task<Kind?> SelectAsync(Guid GUID);
         Task<Kind?> SelectByOuderIdAsync(Guid ouderID);

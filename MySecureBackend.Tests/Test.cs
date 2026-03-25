@@ -147,6 +147,23 @@ namespace MySecureBackend.Tests
             bool isValid = Validator.TryValidateObject(behandeling, context, results, true);
             Assert.IsFalse(isValid);
         }
+
+
+        [TestMethod]
+        public void IsKindMetNegatiefLeeftijd_Ongeldig()
+        {
+            var kind = new Kind
+            {
+                KindID = Guid.NewGuid(),
+                Naam = "Lisa",
+                Leeftijd = -5, // Negatieve leeftijd is ongeldig
+                OuderID = Guid.NewGuid()
+            };
+            var context = new ValidationContext(kind);
+            var results = new List<ValidationResult>();
+            bool isValid = Validator.TryValidateObject(kind, context, results, true);
+            Assert.IsFalse(isValid); // leeftijd moet tussen 0 en 18
+        }
         }
     }
 }

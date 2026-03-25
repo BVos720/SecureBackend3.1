@@ -108,7 +108,7 @@ public class OuderController : ControllerBase
         if (ouder.AccountID != userIdClaim)
             return Forbid();
 
-        await _iOuder.deleteAsync(ouderID);
+        await _iOuder.DeleteAsync(ouderID);
 
         return Ok();
     }
