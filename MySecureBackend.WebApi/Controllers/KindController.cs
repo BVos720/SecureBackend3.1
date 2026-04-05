@@ -13,11 +13,13 @@ public class KindController : ControllerBase
 {
     private readonly IKind _iKind;
     private readonly IOuder _iOuder;
+    private readonly ISettings _iSettings;
 
-    public KindController(IKind kindRepository, IOuder ouderRepository)
+    public KindController(IKind kindRepository, IOuder ouderRepository, ISettings settingsRepository)
     {
         _iKind = kindRepository;
         _iOuder = ouderRepository;
+        _iSettings = settingsRepository;
     }
 
     [HttpGet(Name = "GetKinderen")]
@@ -78,6 +80,17 @@ public class KindController : ControllerBase
         kind.OuderID = ouder.OuderID;
 
         await _iKind.InsertAsync(kind);
+
+        var defaultSettings = new Settings
+        {
+            SettingsID = Guid.NewGuid(),
+            KindID = kind.KindID,
+            Character = 1,
+            Taal = "nl",
+            Dyslexie = false,
+            ColorTheme = 0
+        };
+        await _iSettings.InsertAsync(defaultSettings);
 
         return CreatedAtRoute("GetKindById", new { kindID = kind.KindID }, kind);
     }

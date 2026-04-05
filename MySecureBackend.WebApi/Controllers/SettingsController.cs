@@ -86,14 +86,12 @@ public class SettingsController : ControllerBase
         if (ouder == null)
             return NotFound(new ProblemDetails { Detail = "Geen ouder gevonden voor de ingelogde gebruiker." });
 
-        var kind = await _iKind.SelectAsync(settings.KindID);
+        var kind = await _iKind.SelectByOuderIdAsync(ouder.OuderID);
 
         if (kind == null)
-            return NotFound(new ProblemDetails { Detail = $"Kind {settings.KindID} niet gevonden." });
+            return NotFound(new ProblemDetails { Detail = "Geen kind gevonden voor de ingelogde ouder." });
 
-        if (kind.OuderID != ouder.OuderID)
-            return Forbid();
-
+        settings.KindID = kind.KindID;
         settings.SettingsID = Guid.NewGuid();
 
         await _iSettings.InsertAsync(settings);
