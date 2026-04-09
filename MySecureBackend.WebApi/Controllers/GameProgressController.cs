@@ -15,22 +15,21 @@ public class GameProgressController : ControllerBase
     private readonly IOuder _iOuder;
     private readonly IKind _iKind;
     private readonly IBehandeling _iBehandeling;
+    private readonly IAuthenticationService _authService;
 
-    public GameProgressController(IGameProgress gameProgressRepository, IOuder ouderRepository, IKind kindRepository, IBehandeling behandelingRepository)
+    public GameProgressController(IGameProgress gameProgressRepository, IOuder ouderRepository, IKind kindRepository, IBehandeling behandelingRepository, IAuthenticationService authService)
     {
         _iGameProgress = gameProgressRepository;
         _iOuder = ouderRepository;
         _iKind = kindRepository;
         _iBehandeling = behandelingRepository;
+        _authService = authService;
     }
 
     [HttpGet(Name = "GetGameProgresses")]
     public async Task<ActionResult<List<GameProgress>>> GetAsync()
     {
-        var userIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-
-        if (string.IsNullOrEmpty(userIdClaim))
-            return Unauthorized("Geen geldige gebruikerssessie gevonden.");
+        var userIdClaim = _authService.GetCurrentAuthenticatedUserId();
 
         var ouder = await _iOuder.SelectByAccountIdAsync(userIdClaim);
         if (ouder == null)
@@ -51,10 +50,7 @@ public class GameProgressController : ControllerBase
     [HttpGet("{gameProgressID}", Name = "GetGameProgressById")]
     public async Task<ActionResult<GameProgress>> GetByIdAsync(Guid gameProgressID)
     {
-        var userIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-
-        if (string.IsNullOrEmpty(userIdClaim))
-            return Unauthorized("Geen geldige gebruikerssessie gevonden.");
+        var userIdClaim = _authService.GetCurrentAuthenticatedUserId();
 
         var ouder = await _iOuder.SelectByAccountIdAsync(userIdClaim);
         if (ouder == null)
@@ -82,10 +78,7 @@ public class GameProgressController : ControllerBase
     [HttpPost(Name = "AddGameProgress")]
     public async Task<ActionResult<GameProgress>> AddAsync(GameProgress gameProgress)
     {
-        var userIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-
-        if (string.IsNullOrEmpty(userIdClaim))
-            return Unauthorized("Geen geldige gebruikerssessie gevonden.");
+        var userIdClaim = _authService.GetCurrentAuthenticatedUserId();
 
         var ouder = await _iOuder.SelectByAccountIdAsync(userIdClaim);
         if (ouder == null)
@@ -110,10 +103,7 @@ public class GameProgressController : ControllerBase
     [HttpPut("{gameProgressID}", Name = "UpdateGameProgress")]
     public async Task<ActionResult<GameProgress>> UpdateAsync(Guid gameProgressID, GameProgress gameProgress)
     {
-        var userIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-
-        if (string.IsNullOrEmpty(userIdClaim))
-            return Unauthorized("Geen geldige gebruikerssessie gevonden.");
+        var userIdClaim = _authService.GetCurrentAuthenticatedUserId();
 
         var ouder = await _iOuder.SelectByAccountIdAsync(userIdClaim);
         if (ouder == null)
@@ -145,10 +135,7 @@ public class GameProgressController : ControllerBase
     [HttpDelete("{gameProgressID}", Name = "DeleteGameProgress")]
     public async Task<ActionResult> DeleteAsync(Guid gameProgressID)
     {
-        var userIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-
-        if (string.IsNullOrEmpty(userIdClaim))
-            return Unauthorized("Geen geldige gebruikerssessie gevonden.");
+        var userIdClaim = _authService.GetCurrentAuthenticatedUserId();
 
         var ouder = await _iOuder.SelectByAccountIdAsync(userIdClaim);
         if (ouder == null)

@@ -12,19 +12,18 @@ namespace MySecureBackend.WebApi.Controllers;
 public class OuderController : ControllerBase
 {
     private readonly IOuder _iOuder;
+    private readonly IAuthenticationService _authService;
 
-    public OuderController(IOuder ouderRepository)
+    public OuderController(IOuder ouderRepository, IAuthenticationService authService)
     {
         _iOuder = ouderRepository;
+        _authService = authService;
     }
 
     [HttpGet(Name = "GetOuders")]
     public async Task<ActionResult<Ouder>> GetAsync()
     {
-        var userIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-
-        if (string.IsNullOrEmpty(userIdClaim))
-            return Unauthorized("Geen geldige gebruikerssessie gevonden.");
+        var userIdClaim = _authService.GetCurrentAuthenticatedUserId();
 
         var ouder = await _iOuder.SelectByAccountIdAsync(userIdClaim);
 
@@ -37,10 +36,7 @@ public class OuderController : ControllerBase
     [HttpGet("{ouderID}", Name = "GetOuderById")]
     public async Task<ActionResult<Ouder>> GetByIdAsync(Guid ouderID)
     {
-        var userIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-
-        if (string.IsNullOrEmpty(userIdClaim))
-            return Unauthorized("Geen geldige gebruikerssessie gevonden.");
+        var userIdClaim = _authService.GetCurrentAuthenticatedUserId();
 
         var ouder = await _iOuder.SelectAsync(ouderID);
 
@@ -56,10 +52,7 @@ public class OuderController : ControllerBase
     [HttpPost(Name = "AddOuder")]
     public async Task<ActionResult<Ouder>> AddAsync(Ouder ouder)
     {
-        var userIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-
-        if (string.IsNullOrEmpty(userIdClaim))
-            return Unauthorized("Geen geldige gebruikerssessie gevonden.");
+        var userIdClaim = _authService.GetCurrentAuthenticatedUserId();
 
         ouder.OuderID = Guid.NewGuid();
         ouder.AccountID = userIdClaim;
@@ -72,10 +65,7 @@ public class OuderController : ControllerBase
     [HttpPut("{ouderID}", Name = "UpdateOuder")]
     public async Task<ActionResult<Ouder>> UpdateAsync(Guid ouderID, Ouder ouder)
     {
-        var userIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-
-        if (string.IsNullOrEmpty(userIdClaim))
-            return Unauthorized("Geen geldige gebruikerssessie gevonden.");
+        var userIdClaim = _authService.GetCurrentAuthenticatedUserId();
 
         var existing = await _iOuder.SelectAsync(ouderID);
         if (existing == null)
@@ -95,10 +85,7 @@ public class OuderController : ControllerBase
     [HttpDelete("{ouderID}", Name = "DeleteOuder")]
     public async Task<ActionResult> DeleteAsync(Guid ouderID)
     {
-        var userIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-
-        if (string.IsNullOrEmpty(userIdClaim))
-            return Unauthorized("Geen geldige gebruikerssessie gevonden.");
+        var userIdClaim = _authService.GetCurrentAuthenticatedUserId();
 
         var ouder = await _iOuder.SelectAsync(ouderID);
 

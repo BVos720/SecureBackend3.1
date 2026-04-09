@@ -14,21 +14,20 @@ public class BehandelingController : ControllerBase
     private readonly IBehandeling _iBehandeling;
     private readonly IOuder _iOuder;
     private readonly IKind _iKind;
+    private readonly IAuthenticationService _authService;
 
-    public BehandelingController(IBehandeling behandelingRepository, IOuder ouderRepository, IKind kindRepository)
+    public BehandelingController(IBehandeling behandelingRepository, IOuder ouderRepository, IKind kindRepository, IAuthenticationService authService)
     {
         _iBehandeling = behandelingRepository;
         _iOuder = ouderRepository;
         _iKind = kindRepository;
+        _authService = authService;
     }
 
     [HttpGet(Name = "GetBehandelingen")]
     public async Task<ActionResult<List<Behandeling>>> GetAsync()
     {
-        var userIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-
-        if (string.IsNullOrEmpty(userIdClaim))
-            return Unauthorized("Geen geldige gebruikerssessie gevonden.");
+        var userIdClaim = _authService.GetCurrentAuthenticatedUserId();
 
         var ouder = await _iOuder.SelectByAccountIdAsync(userIdClaim);
         if (ouder == null)
@@ -45,10 +44,7 @@ public class BehandelingController : ControllerBase
     [HttpGet("{behandelingID}", Name = "GetBehandelingById")]
     public async Task<ActionResult<Behandeling>> GetByIdAsync(Guid behandelingID)
     {
-        var userIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-
-        if (string.IsNullOrEmpty(userIdClaim))
-            return Unauthorized("Geen geldige gebruikerssessie gevonden.");
+        var userIdClaim = _authService.GetCurrentAuthenticatedUserId();
 
         var ouder = await _iOuder.SelectByAccountIdAsync(userIdClaim);
         if (ouder == null)
@@ -72,10 +68,7 @@ public class BehandelingController : ControllerBase
     [HttpPost(Name = "AddBehandeling")]
     public async Task<ActionResult<Behandeling>> AddAsync(Behandeling behandeling)
     {
-        var userIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-
-        if (string.IsNullOrEmpty(userIdClaim))
-            return Unauthorized("Geen geldige gebruikerssessie gevonden.");
+        var userIdClaim = _authService.GetCurrentAuthenticatedUserId();
 
         var ouder = await _iOuder.SelectByAccountIdAsync(userIdClaim);
         if (ouder == null)
@@ -96,10 +89,7 @@ public class BehandelingController : ControllerBase
     [HttpPut("{behandelingID}", Name = "UpdateBehandeling")]
     public async Task<ActionResult<Behandeling>> UpdateAsync(Guid behandelingID, Behandeling behandeling)
     {
-        var userIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-
-        if (string.IsNullOrEmpty(userIdClaim))
-            return Unauthorized("Geen geldige gebruikerssessie gevonden.");
+        var userIdClaim = _authService.GetCurrentAuthenticatedUserId();
 
         var ouder = await _iOuder.SelectByAccountIdAsync(userIdClaim);
         if (ouder == null)
@@ -127,10 +117,7 @@ public class BehandelingController : ControllerBase
     [HttpDelete("{behandelingID}", Name = "DeleteBehandeling")]
     public async Task<ActionResult> DeleteAsync(Guid behandelingID)
     {
-        var userIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-
-        if (string.IsNullOrEmpty(userIdClaim))
-            return Unauthorized("Geen geldige gebruikerssessie gevonden.");
+        var userIdClaim = _authService.GetCurrentAuthenticatedUserId();
 
         var ouder = await _iOuder.SelectByAccountIdAsync(userIdClaim);
         if (ouder == null)

@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using MySecureBackend.WebApi.Models;
 using MySecureBackend.WebApi.Repositories;
+using MySecureBackend.WebApi.Services;
 
 namespace MySecureBackend.WebApi.Controllers;
 
@@ -13,21 +14,20 @@ public class SettingsController : ControllerBase
     private readonly ISettings _iSettings;
     private readonly IKind _iKind;
     private readonly IOuder _iOuder;
+    private readonly IAuthenticationService _authService;
 
-    public SettingsController(ISettings settingsRepository, IKind kindRepository, IOuder ouderRepository)
+    public SettingsController(ISettings settingsRepository, IKind kindRepository, IOuder ouderRepository, IAuthenticationService authService)
     {
         _iSettings = settingsRepository;
         _iKind = kindRepository;
         _iOuder = ouderRepository;
+        _authService = authService;
     }
 
     [HttpGet(Name = "GetSettings")]
     public async Task<ActionResult<Settings>> GetAsync()
     {
-        var userIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-
-        if (string.IsNullOrEmpty(userIdClaim))
-            return Unauthorized("Geen geldige gebruikerssessie gevonden.");
+        var userIdClaim = _authService.GetCurrentAuthenticatedUserId();
 
         var ouder = await _iOuder.SelectByAccountIdAsync(userIdClaim);
 
@@ -50,10 +50,7 @@ public class SettingsController : ControllerBase
     [HttpGet("{settingsID}", Name = "GetSettingsById")]
     public async Task<ActionResult<Settings>> GetByIdAsync(Guid settingsID)
     {
-        var userIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-
-        if (string.IsNullOrEmpty(userIdClaim))
-            return Unauthorized("Geen geldige gebruikerssessie gevonden.");
+        var userIdClaim = _authService.GetCurrentAuthenticatedUserId();
 
         var ouder = await _iOuder.SelectByAccountIdAsync(userIdClaim);
 
@@ -76,10 +73,7 @@ public class SettingsController : ControllerBase
     [HttpPost(Name = "AddSettings")]
     public async Task<ActionResult<Settings>> AddAsync(Settings settings)
     {
-        var userIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-
-        if (string.IsNullOrEmpty(userIdClaim))
-            return Unauthorized("Geen geldige gebruikerssessie gevonden.");
+        var userIdClaim = _authService.GetCurrentAuthenticatedUserId();
 
         var ouder = await _iOuder.SelectByAccountIdAsync(userIdClaim);
 
@@ -102,10 +96,7 @@ public class SettingsController : ControllerBase
     [HttpPut("{settingsID}", Name = "UpdateSettings")]
     public async Task<ActionResult<Settings>> UpdateAsync(Guid settingsID, Settings settings)
     {
-        var userIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-
-        if (string.IsNullOrEmpty(userIdClaim))
-            return Unauthorized("Geen geldige gebruikerssessie gevonden.");
+        var userIdClaim = _authService.GetCurrentAuthenticatedUserId();
 
         var ouder = await _iOuder.SelectByAccountIdAsync(userIdClaim);
 
@@ -133,10 +124,7 @@ public class SettingsController : ControllerBase
     [HttpDelete("{settingsID}", Name = "DeleteSettings")]
     public async Task<ActionResult> DeleteAsync(Guid settingsID)
     {
-        var userIdClaim = User.FindFirst(System.Security.Claims.ClaimTypes.NameIdentifier)?.Value;
-
-        if (string.IsNullOrEmpty(userIdClaim))
-            return Unauthorized("Geen geldige gebruikerssessie gevonden.");
+        var userIdClaim = _authService.GetCurrentAuthenticatedUserId();
 
         var ouder = await _iOuder.SelectByAccountIdAsync(userIdClaim);
 
