@@ -106,3 +106,7 @@ jobs:
 
     - name: Run Postman tests
       run: |
+        sleep 30
+        newman run "MySecureBackend.Tests/LU1 Systeem Testen.postman_collection.json" \
+          --env-var "baseUrl=https://${{ secrets.AZURE_WEBAPP_NAME }}.azurewebsites.net" \
+          --delay-request 500
