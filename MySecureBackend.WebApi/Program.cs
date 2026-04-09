@@ -91,6 +91,8 @@ app.UseHttpsRedirection();
 
 app.UseCors("UnityPolicy");
 
+app.UseAuthentication();
+
 app.UseAuthorization();
 
 app.MapGroup("/account").MapIdentityApi<IdentityUser>().WithTags("Account");
