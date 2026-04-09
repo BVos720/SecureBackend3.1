@@ -104,9 +104,21 @@ jobs:
     - name: Install Newman
       run: npm install -g newman
 
+    - name: Wait for Azure to be ready
+      run: |
+        echo "Wachten tot Azure klaar is..."
+        for i in {1..20}; do
+          STATUS=$(curl -s -o /dev/null -w "%{http_code}" https://${{ secrets.AZURE_WEBAPP_NAME }}.azurewebsites.net/)
+          echo "Poging $i: HTTP $STATUS"
+          if [ "$STATUS" = "200" ]; then
+            echo "API is klaar!"
+            break
+          fi
+          sleep 15
+        done
+
     - name: Run Postman tests
       run: |
-        sleep 30
         newman run "MySecureBackend.Tests/LU1 Systeem Testen.postman_collection.json" \
           --env-var "baseUrl=https://${{ secrets.AZURE_WEBAPP_NAME }}.azurewebsites.net" \
           --delay-request 500
