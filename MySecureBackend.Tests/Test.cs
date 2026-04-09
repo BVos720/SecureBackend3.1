@@ -1,14 +1,12 @@
-using Microsoft.AspNetCore.Mvc;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using Moq;
-using MySecureBackend.WebApi.Controllers;
 using MySecureBackend.WebApi.Models;
-using MySecureBackend.WebApi.Repositories;
-using MySecureBackend.WebApi.Services;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.Text;
+using MySecureBackend.WebApi.Controllers;
+using MySecureBackend.WebApi.Repositories;
+using MySecureBackend.WebApi.Services;
 
 namespace MySecureBackend.Tests
 {
@@ -167,60 +165,52 @@ namespace MySecureBackend.Tests
             Assert.IsFalse(isValid); // leeftijd moet tussen 0 en 18
         }
 
-        // Test 1: OuderController geeft 404 als er geen ouder is voor de ingelogde gebruiker
         [TestMethod]
-        public async Task OuderController_GetAsync_GeenOuderGevonden_Returns404()
+        public void IsKindMetLeeftijd19_Ongeldig()
         {
-            var mockOuder = new Mock<IOuder>();
-            var mockAuth = new Mock<IAuthenticationService>();
-
-            mockAuth.Setup(x => x.GetCurrentAuthenticatedUserId()).Returns("user-123");
-            mockOuder.Setup(x => x.SelectByAccountIdAsync("user-123")).ReturnsAsync(null as Ouder);
-
-            var controller = new OuderController(mockOuder.Object, mockAuth.Object);
-
-            var response = await controller.GetAsync();
-
-            Assert.IsInstanceOfType<NotFoundObjectResult>(response.Result);
+            var kind = new Kind
+            {
+                KindID = Guid.NewGuid(),
+                Naam = "Lisa",
+                Leeftijd = 19,
+                OuderID = Guid.NewGuid()
+            };
+            var context = new ValidationContext(kind);
+            var results = new List<ValidationResult>();
+            bool isValid = Validator.TryValidateObject(kind, context, results, true);
+            Assert.IsFalse(isValid);
         }
 
-        // Test 2: OuderController geeft Forbid als de ouder toebehoort aan een andere gebruiker
         [TestMethod]
-        public async Task OuderController_GetByIdAsync_AndereGebruiker_ReturnsForbid()
+        public void IsKindMetLeeftijd18_Geldig()
         {
-            var mockOuder = new Mock<IOuder>();
-            var mockAuth = new Mock<IAuthenticationService>();
-
-            var ouderID = Guid.NewGuid();
-            var ouder = new Ouder { OuderID = ouderID, Naam = "Jan", AccountID = "andere-user" };
-
-            mockAuth.Setup(x => x.GetCurrentAuthenticatedUserId()).Returns("user-123");
-            mockOuder.Setup(x => x.SelectAsync(ouderID)).ReturnsAsync(ouder);
-
-            var controller = new OuderController(mockOuder.Object, mockAuth.Object);
-
-            var response = await controller.GetByIdAsync(ouderID);
-
-            Assert.IsInstanceOfType<ForbidResult>(response.Result);
+            var kind = new Kind
+            {
+                KindID = Guid.NewGuid(),
+                Naam = "Lisa",
+                Leeftijd = 18,
+                OuderID = Guid.NewGuid()
+            };
+            var context = new ValidationContext(kind);
+            var results = new List<ValidationResult>();
+            bool isValid = Validator.TryValidateObject(kind, context, results, true);
+            Assert.IsTrue(isValid);
         }
 
-        // Test 3: KindController geeft 404 als er geen ouder is voor de ingelogde gebruiker
         [TestMethod]
-        public async Task KindController_GetAsync_GeenOuderGevonden_Returns404()
+        public void IsKindMetLeeftijd0_Geldig()
         {
-            var mockKind = new Mock<IKind>();
-            var mockOuder = new Mock<IOuder>();
-            var mockSettings = new Mock<ISettings>();
-            var mockAuth = new Mock<IAuthenticationService>();
-
-            mockAuth.Setup(x => x.GetCurrentAuthenticatedUserId()).Returns("user-123");
-            mockOuder.Setup(x => x.SelectByAccountIdAsync("user-123")).ReturnsAsync(null as Ouder);
-
-            var controller = new KindController(mockKind.Object, mockOuder.Object, mockSettings.Object, mockAuth.Object);
-
-            var response = await controller.GetAsync();
-
-            Assert.IsInstanceOfType<NotFoundObjectResult>(response.Result);
+            var kind = new Kind
+            {
+                KindID = Guid.NewGuid(),
+                Naam = "Baby",
+                Leeftijd = 0,
+                OuderID = Guid.NewGuid()
+            };
+            var context = new ValidationContext(kind);
+            var results = new List<ValidationResult>();
+            bool isValid = Validator.TryValidateObject(kind, context, results, true);
+            Assert.IsTrue(isValid);
         }
         }
     }

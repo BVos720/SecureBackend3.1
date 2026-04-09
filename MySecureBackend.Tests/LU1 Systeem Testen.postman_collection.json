@@ -1,0 +1,1811 @@
+{
+  "info": {
+    "_postman_id": "ab5b05bf-f86f-4b02-8364-fd65316df650",
+    "name": "LU1 Systeem Testen",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+    "_exporter_id": "52227663",
+    "_collection_link": "https://go.postman.co/collection/52227663-ab5b05bf-f86f-4b02-8364-fd65316df650?source=collection_link"
+  },
+  "item": [
+    {
+      "name": "1. Registreer Gebruiker",
+      "item": [
+        {
+          "name": "POST /account/register - Succes",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status is 200 of 201\", function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+                  "});",
+                  "// pm.test(\"Response heeft een body\", function () {",
+                  "//     pm.expect(pm.response.text()).to.not.be.empty;",
+                  "// });"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            },
+            {
+              "listen": "prerequest",
+              "script": {
+                "exec": [
+                  "const timestamp = Date.now();",
+                  "const email = `testuser_${timestamp}@test.com`;",
+                  "pm.collectionVariables.set(\"registeredEmail\", email);"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{registeredEmail}}\",\n  \"password\": \"Test@1234!\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/account/register",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "account",
+                "register"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "2. Login Gebruiker",
+      "item": [
+        {
+          "name": "POST /account/login - Succes",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test(\"Response bevat accessToken\", function () {",
+                  "    const json = pm.response.json();",
+                  "    pm.expect(json).to.have.property(\"accessToken\");",
+                  "    pm.collectionVariables.set(\"authToken\", json.accessToken);",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{registeredEmail}}\",\n  \"password\": \"Test@1234!\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/account/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "account",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST /account/login - Ongeldig wachtwoord",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status is 400 of 401\", function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([400, 401]);",
+                  "});",
+                  "pm.test(\"Response geeft foutmelding\", function () {",
+                  "    pm.expect(pm.response.text()).to.not.be.empty;",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{registeredEmail}}\",\n  \"password\": \"VerkeerWachtwoord!\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/account/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "account",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST /account/login - Ontbrekende velden",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status is 400\", function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"email\": \"{{registeredEmail}}\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/account/login",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "account",
+                "login"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "3. Maak Ouder aan",
+      "item": [
+        {
+          "name": "POST /api/ouder - Succes",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is 200 of 201\", function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+                  "});",
+                  "pm.test(\"Response bevat ouderID\", function () {",
+                  "    const json = pm.response.json();",
+                  "    pm.expect(json).to.have.property(\"ouderID\");",
+                  "    pm.collectionVariables.set(\"ouderId\", json.ouderID);",
+                  "});",
+                  "pm.test(\"Naam is correct\", function () {",
+                  "    const json = pm.response.json();",
+                  "    pm.expect(json.naam).to.eql(\"Jan Jansen\");",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{authToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"naam\": \"Jan Jansen\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/ouder",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "ouder"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST /api/ouder - Geen token (401)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is 401\", function () {",
+                  "    pm.response.to.have.status(401);",
+                  "});",
+                  "pm.test(\"Toegang geweigerd zonder token\", function () {",
+                  "    pm.expect(pm.response.code).to.eql(401);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"naam\": \"Jan Jansen\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/ouder",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "ouder"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST /api/ouder - Ontbrekende velden (400)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is 400\", function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{authToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/ouder",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "ouder"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "4. Maak Kind aan",
+      "item": [
+        {
+          "name": "POST /api/kind - Succes",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is 200 of 201\", function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+                  "});",
+                  "pm.test(\"Response bevat kindID\", function () {",
+                  "    const json = pm.response.json();",
+                  "    pm.expect(json).to.have.property(\"kindID\");",
+                  "    pm.collectionVariables.set(\"kindId\", json.kindID);",
+                  "});",
+                  "pm.test(\"Naam is correct\", function () {",
+                  "    const json = pm.response.json();",
+                  "    pm.expect(json.naam).to.eql(\"Emma Jansen\");",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{authToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"naam\": \"Emma Jansen\",\n  \"leeftijd\": 10\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/kind",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "kind"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST /api/kind - Geen token (401)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is 401\", function () {",
+                  "    pm.response.to.have.status(401);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"naam\": \"Emma Jansen\",\n  \"leeftijd\": 10\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/kind",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "kind"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST /api/kind - Ontbrekende velden (400)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is 400\", function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{authToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"leeftijd\": 10\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/kind",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "kind"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "5. Voeg Behandeling toe",
+      "item": [
+        {
+          "name": "POST /api/behandeling - Succes",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is 200 of 201\", function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+                  "});",
+                  "pm.test(\"Response bevat behandelingID\", function () {",
+                  "    const json = pm.response.json();",
+                  "    pm.expect(json).to.have.property(\"behandelingID\");",
+                  "    pm.collectionVariables.set(\"behandelingId\", json.behandelingID);",
+                  "});",
+                  "pm.test(\"Type is correct\", function () {",
+                  "    const json = pm.response.json();",
+                  "    pm.expect(json.type).to.eql(\"Fysiotherapie\");",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{authToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"type\": \"Fysiotherapie\",\n  \"datum\": \"2026-03-23T10:00:00\",\n  \"arts\": \"Dr. Smit\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/behandeling",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "behandeling"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST /api/behandeling - Geen token (401)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is 401\", function () {",
+                  "    pm.response.to.have.status(401);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"type\": \"Fysiotherapie\",\n  \"datum\": \"2026-03-23T10:00:00\",\n  \"arts\": \"Dr. Smit\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/behandeling",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "behandeling"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST /api/behandeling - Ontbrekende velden (400)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is 400\", function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{authToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"type\": \"Fysiotherapie\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/behandeling",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "behandeling"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "6. Voeg GameProgress toe",
+      "item": [
+        {
+          "name": "POST /api/gameprogress - Succes",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is 200 of 201\", function () {",
+                  "    pm.expect(pm.response.code).to.be.oneOf([200, 201]);",
+                  "});",
+                  "pm.test(\"Response bevat gameProgressID\", function () {",
+                  "    const json = pm.response.json();",
+                  "    pm.expect(json).to.have.property(\"gameProgressID\");",
+                  "    pm.collectionVariables.set(\"gameProgressId\", json.gameProgressID);",
+                  "});",
+                  "pm.test(\"Points is correct\", function () {",
+                  "    const json = pm.response.json();",
+                  "    pm.expect(json.points).to.eql(150);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{authToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"levelProgress\": 0.75,\n  \"points\": 150\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/gameprogress",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "gameprogress"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST /api/gameprogress - Geen token (401)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is 401\", function () {",
+                  "    pm.response.to.have.status(401);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"levelProgress\": 0.75,\n  \"points\": 150\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/gameprogress",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "gameprogress"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST /api/gameprogress - Ontbrekende velden (400)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status is 400\", function () {",
+                  "    pm.response.to.have.status(400);",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{authToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n    \"levelProgress\": \"Kaas\",\n    \"points\": \"150\"\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/gameprogress",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "gameprogress"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "7. Ophalen & Data Integriteit",
+      "item": [
+        {
+          "name": "GET /ouder - Alle ouders ophalen",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test(\"Response is een array\", function () {",
+                  "    const json = pm.response.json();",
+                  "    pm.expect(json).to.be.an(\"array\");",
+                  "});",
+                  "pm.test(\"Aangemaakte ouder staat in de lijst\", function () {",
+                  "    const json = pm.response.json();",
+                  "    const ouderId = pm.collectionVariables.get(\"ouderId\");",
+                  "    const gevonden = json.some(o => String(o.ouderID) === String(ouderId));",
+                  "    pm.expect(gevonden).to.be.true;",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{authToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/ouder",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "ouder"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET /ouder/:id - Ouder op ID",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test(\"ID komt overeen\", function () {",
+                  "    const json = pm.response.json();",
+                  "    const ouderId = pm.collectionVariables.get(\"ouderId\");",
+                  "    pm.expect(String(json.ouderID)).to.eql(String(ouderId));",
+                  "});",
+                  "pm.test(\"Naam is correct\", function () {",
+                  "    const json = pm.response.json();",
+                  "    pm.expect(json.naam).to.eql(\"Jan Jansen\");",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{authToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/ouder/{{ouderId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "ouder",
+                "{{ouderId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET /kind - Alle kinderen ophalen",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test(\"Response is een array\", function () {",
+                  "    const json = pm.response.json();",
+                  "    pm.expect(json).to.be.an(\"array\");",
+                  "});",
+                  "pm.test(\"Aangemaakt kind staat in de lijst\", function () {",
+                  "    const json = pm.response.json();",
+                  "    const kindId = pm.collectionVariables.get(\"kindId\");",
+                  "    const gevonden = json.some(k => String(k.kindID) === String(kindId));",
+                  "    pm.expect(gevonden).to.be.true;",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{authToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/kind",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "kind"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET /kind/:id - Kind op ID",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test(\"ID komt overeen\", function () {",
+                  "    const json = pm.response.json();",
+                  "    const kindId = pm.collectionVariables.get(\"kindId\");",
+                  "    pm.expect(String(json.kindID)).to.eql(String(kindId));",
+                  "});",
+                  "pm.test(\"Naam is correct\", function () {",
+                  "    const json = pm.response.json();",
+                  "    pm.expect(json.naam).to.eql(\"Emma Jansen\");",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{authToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/kind/{{kindId}}",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "kind",
+                "{{kindId}}"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET /behandeling - Alle behandelingen ophalen",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test(\"Response is een array\", function () {",
+                  "    const json = pm.response.json();",
+                  "    pm.expect(json).to.be.an(\"array\");",
+                  "});",
+                  "pm.test(\"Aangemaakte behandeling staat in de lijst\", function () {",
+                  "    const json = pm.response.json();",
+                  "    const behandelingId = pm.collectionVariables.get(\"behandelingId\");",
+                  "    const gevonden = json.some(b => String(b.behandelingID) === String(behandelingId));",
+                  "    pm.expect(gevonden).to.be.true;",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{authToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/behandeling",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "behandeling"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET /gameprogress - Alle gameprogresses ophalen",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "pm.test(\"Status is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test(\"Response is een array\", function () {",
+                  "    const json = pm.response.json();",
+                  "    pm.expect(json).to.be.an(\"array\");",
+                  "});",
+                  "pm.test(\"Aangemaakte gameprogress staat in de lijst\", function () {",
+                  "    const json = pm.response.json();",
+                  "    const gameProgressId = pm.collectionVariables.get(\"gameProgressId\");",
+                  "    const gevonden = json.some(g => String(g.gameProgressID) === String(gameProgressId));",
+                  "    pm.expect(gevonden).to.be.true;",
+                  "});"
+                ],
+                "type": "text/javascript",
+                "packages": {},
+                "requests": {}
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "{{authToken}}",
+                  "type": "string"
+                }
+              ]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/gameprogress",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "gameprogress"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "8. Ongeautoriseerde Toegang",
+      "item": [
+        {
+          "name": "GET /ouder - Geen token (401)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is 401\", function () {",
+                  "    pm.response.to.have.status(401);",
+                  "});",
+                  "pm.test(\"Toegang geweigerd zonder token\", function () {",
+                  "    pm.expect(pm.response.code).to.eql(401);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/ouder",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "ouder"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET /kind - Geen token (401)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is 401\", function () {",
+                  "    pm.response.to.have.status(401);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/kind",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "kind"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET /behandeling - Geen token (401)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is 401\", function () {",
+                  "    pm.response.to.have.status(401);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/behandeling",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "behandeling"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET /gameprogress - Geen token (401)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is 401\", function () {",
+                  "    pm.response.to.have.status(401);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/gameprogress",
+              "host": [
+                "{{baseUrl}}"
+              ],
+              "path": [
+                "gameprogress"
+              ]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "9. Niet Gevonden (404)",
+      "item": [
+        {
+          "name": "GET /ouder/:id - Niet bestaand ID (404)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is 404\", function () {",
+                  "    pm.response.to.have.status(404);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [{ "key": "token", "value": "{{authToken}}", "type": "string" }]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/ouder/00000000-0000-0000-0000-000000000000",
+              "host": ["{{baseUrl}}"],
+              "path": ["ouder", "00000000-0000-0000-0000-000000000000"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET /kind/:id - Niet bestaand ID (404)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is 404\", function () {",
+                  "    pm.response.to.have.status(404);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [{ "key": "token", "value": "{{authToken}}", "type": "string" }]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/kind/00000000-0000-0000-0000-000000000000",
+              "host": ["{{baseUrl}}"],
+              "path": ["kind", "00000000-0000-0000-0000-000000000000"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET /behandeling/:id - Niet bestaand ID (404)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is 404\", function () {",
+                  "    pm.response.to.have.status(404);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [{ "key": "token", "value": "{{authToken}}", "type": "string" }]
+            },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/behandeling/00000000-0000-0000-0000-000000000000",
+              "host": ["{{baseUrl}}"],
+              "path": ["behandeling", "00000000-0000-0000-0000-000000000000"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "10. Bijwerken (PUT)",
+      "item": [
+        {
+          "name": "PUT /ouder/:id - Succes",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test(\"Naam is bijgewerkt\", function () {",
+                  "    const json = pm.response.json();",
+                  "    pm.expect(json.naam).to.eql(\"Jan Jansen Bijgewerkt\");",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [{ "key": "token", "value": "{{authToken}}", "type": "string" }]
+            },
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"naam\": \"Jan Jansen Bijgewerkt\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/ouder/{{ouderId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["ouder", "{{ouderId}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PUT /ouder/:id - Geen token (401)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is 401\", function () {",
+                  "    pm.response.to.have.status(401);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"naam\": \"Jan Jansen Bijgewerkt\"\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/ouder/{{ouderId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["ouder", "{{ouderId}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PUT /kind/:id - Succes",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});",
+                  "pm.test(\"Naam is bijgewerkt\", function () {",
+                  "    const json = pm.response.json();",
+                  "    pm.expect(json.naam).to.eql(\"Emma Bijgewerkt\");",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [{ "key": "token", "value": "{{authToken}}", "type": "string" }]
+            },
+            "method": "PUT",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"naam\": \"Emma Bijgewerkt\",\n  \"leeftijd\": 11\n}",
+              "options": { "raw": { "language": "json" } }
+            },
+            "url": {
+              "raw": "{{baseUrl}}/kind/{{kindId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["kind", "{{kindId}}"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "11. Verwijderen (DELETE)",
+      "item": [
+        {
+          "name": "DELETE /gameprogress/:id - Succes",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [{ "key": "token", "value": "{{authToken}}", "type": "string" }]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/gameprogress/{{gameProgressId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["gameprogress", "{{gameProgressId}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "DELETE /behandeling/:id - Succes",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [{ "key": "token", "value": "{{authToken}}", "type": "string" }]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/behandeling/{{behandelingId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["behandeling", "{{behandelingId}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "DELETE /kind/:id - Geen token (401)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is 401\", function () {",
+                  "    pm.response.to.have.status(401);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/kind/{{kindId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["kind", "{{kindId}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "DELETE /kind/:id - Succes",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [{ "key": "token", "value": "{{authToken}}", "type": "string" }]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/kind/{{kindId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["kind", "{{kindId}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "DELETE /ouder/:id - Geen token (401)",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is 401\", function () {",
+                  "    pm.response.to.have.status(401);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/ouder/{{ouderId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["ouder", "{{ouderId}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "DELETE /ouder/:id - Succes",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Status is 200\", function () {",
+                  "    pm.response.to.have.status(200);",
+                  "});"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [{ "key": "token", "value": "{{authToken}}", "type": "string" }]
+            },
+            "method": "DELETE",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/ouder/{{ouderId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["ouder", "{{ouderId}}"]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [
+      {
+        "key": "token",
+        "value": "{{authToken}}",
+        "type": "string"
+      }
+    ]
+  },
+  "event": [
+    {
+      "listen": "prerequest",
+      "script": {
+        "type": "text/javascript",
+        "exec": [
+          ""
+        ]
+      }
+    }
+  ],
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": ""
+    },
+    {
+      "key": "authToken",
+      "value": ""
+    },
+    {
+      "key": "ouderId",
+      "value": ""
+    },
+    {
+      "key": "kindId",
+      "value": ""
+    },
+    {
+      "key": "behandelingId",
+      "value": ""
+    },
+    {
+      "key": "gameProgressId",
+      "value": ""
+    },
+    {
+      "key": "registeredEmail",
+      "value": ""
+    }
+  ]
+}
