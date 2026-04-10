@@ -9,7 +9,7 @@ namespace MySecureBackend.WebApi.Models
         public Guid SettingsID { get; set; }
         [Required]
         public int Character { get; set; }
-        public string? Taal { get; set; }
+        public int? Taal { get; set; }
         public bool? Dyslexie { get; set; }
         public int? ColorTheme { get; set; }
         [ValidateNever]

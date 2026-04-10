@@ -79,7 +79,7 @@ public class KindController : ControllerBase
             SettingsID = Guid.NewGuid(),
             KindID = kind.KindID,
             Character = 1,
-            Taal = "nl",
+            Taal = 0,
             Dyslexie = false,
             ColorTheme = 0
         };
